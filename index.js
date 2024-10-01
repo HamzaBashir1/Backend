@@ -41,7 +41,7 @@ app.use(cookieParser());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://putko-main.vercel.app",
+    origin: "https://www.putkoapp.online/",
     credentials: true,
   },
 });
