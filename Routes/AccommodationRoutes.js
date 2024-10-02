@@ -8,22 +8,26 @@ import {
   deleteAccommodation,
   updateAccommodationByAccommodationId,
   getUserAccommodations,
-  searchAccommodationsByCategory
+  searchAccommodationsByCategory,
+  incrementViewCount,
+  incrementClickCount,
+  customerInterest
 } from '../Controllers/AccommodationController.js';
 
 const router = express.Router();
 
 // Search accommodations by category (this should be first)
 router.get("/accommodation/search", searchAccommodationsByCategory);
-
-// Protected routes (require authentication)
 router.post("/accommodation", createAccommodation);
 router.get("/accommodation", getAccommodations);
 router.get("/accommodation/:id", getAccommodationById);
 router.put("/accommodation/:id", updateAccommodation);
-
 router.get("/accommodation/user/:userId", getUserAccommodations);
 router.put("/accommodation/updateOccupancyCalendar/:userId", updateAccommodationByAccommodationId);
 router.delete("/accommodation/:id", deleteAccommodation);
+// Routes for incrementing view and click counts
+router.put('/accommodation/:id/view', incrementViewCount);
+router.put('/accommodation/:id/click', incrementClickCount);
+router.put('/accommodation/:id/interest', customerInterest);
 
 export default router;

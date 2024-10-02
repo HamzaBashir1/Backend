@@ -242,7 +242,14 @@ const accommodationSchema = new mongoose.Schema({
         default: 'booked'
       }
     }
-  ]
-});
+  ],
+  views: { type: Number, default: 0 },
+  clicks: { type: Number, default: 0 },
+  customerInterest: { type: Number, default: 0 },
+  date: {
+    type: Date,
+    default: Date.now // Sets the date to the current date/time upon creation
+  }
+}, { timestamps: true });
 
 export default mongoose.model('Accommodation', accommodationSchema);

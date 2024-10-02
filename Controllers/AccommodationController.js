@@ -13,7 +13,6 @@ export const createAccommodation = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-//
 
 // Get all accommodations for a specific user
 export const getUserAccommodations = async (req, res) => {
@@ -34,9 +33,6 @@ export const getUserAccommodations = async (req, res) => {
   }
 };
 
-
-
-//
 // Get all accommodations
 export const getAccommodations = async (req, res) => {
   try {
@@ -59,11 +55,7 @@ export const getAccommodationById = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-//
-//
-// PUT /api/accommodation/:id
 
-//
 // Update the occupancyCalendar for a specific user by userId
 export const updateAccommodationByAccommodationId = async (req, res) => {
   const { accommodationId } = req.params; // Get accommodationId from the request parameters
@@ -88,7 +80,6 @@ export const updateAccommodationByAccommodationId = async (req, res) => {
   }
 };
 
-//
 // Update an accommodation by ID
 export const updateAccommodation = async (req, res) => {
   try {
@@ -121,7 +112,6 @@ export const deleteAccommodation = async (req, res) => {
 };
 
 // Search accommodations by property type
-// Search accommodations by property type
 export const searchAccommodationsByCategory = async (req, res) => {
   try {
     const { category } = req.query; // Get the category from the query parameters
@@ -144,5 +134,61 @@ export const searchAccommodationsByCategory = async (req, res) => {
   } catch (error) {
     console.error(error); // Log the error for more detail
     res.status(500).json({ error: 'Failed to fetch accommodations' });
+  }
+};
+
+// Increment accommodation view count
+export const incrementViewCount = async (req, res) => {
+  const { id } = req.params; // accommodation ID
+
+  try {
+    const accommodation = await Accommodation.findByIdAndUpdate(
+      id,
+      { $inc: { views: 1 } }, // Increment the views by 1
+      { new: true } // Return the updated document
+    );
+
+    if (!accommodation) {
+      return res.status(404).json({ message: "Accommodation not found" });
+    }
+
+    res.status(200).json({ message: "View count incremented", accommodation });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Increment accommodation click count
+export const incrementClickCount = async (req, res) => {
+  const { id } = req.params; // accommodation ID
+
+  try {
+    const accommodation = await Accommodation.findByIdAndUpdate(
+      id,
+      { $inc: { clicks: 1 } }, // Increment the clicks by 1
+      { new: true } // Return the updated document
+    );
+
+    if (!accommodation) {
+      return res.status(404).json({ message: "Accommodation not found" });
+    }
+
+    res.status(200).json({ message: "Click count incremented", accommodation });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Increment customer interest
+export const customerInterest = async (req, res) => {
+  try {
+    const accommodation = await Accommodation.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { customerInterest: 1 } }, // Increment the customer interest count by 1
+      { new: true }
+    );
+    res.status(200).json(accommodation);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
