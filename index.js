@@ -18,6 +18,7 @@ import Message from './models/messageModel.js';
 import reviewRoutes from './Routes/ReviewRoutes.js';
 import EmailRoutes from './Routes/EmailRoutes.js';
 import ReservationRoutes from './Routes/ReservationRoutes.js';
+import FavoriteRoutes from './Routes/FavoriteRoutes.js'
 
 dotenv.config();
 
@@ -82,6 +83,7 @@ app.use('/api', messageRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/subscribe", EmailRoutes);
 app.use("/api/reservation", ReservationRoutes);
+app.use("/api/favorite", FavoriteRoutes);
 
 // Socket.IO connection
 io.on('connection', (socket) => {

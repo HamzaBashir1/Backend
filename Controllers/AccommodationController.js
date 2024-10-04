@@ -27,11 +27,28 @@ export const getUserAccommodations = async (req, res) => {
       return res.status(404).json({ message: "No accommodations found for this user" });
     }
 
-    res.status(200).json(accommodations);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+// Check if user already posted ad so no ad posted again
+// export const getCheckAccommodations = async (req, res) => {
+//   const { userId } = req.params; 
+
+//   try {
+
+//     const accommodations = await Accommodation.find({ userId }).populate('userId', 'name email'); 
+
+//     // If accommodations exist, return that the user has already posted
+//     if (accommodations.length > 0) {
+//       return res.status(200).json({ hasPosted: true, message: "User has already posted an accommodation." });
+//     }
+
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 
 // Get all accommodations
 export const getAccommodations = async (req, res) => {

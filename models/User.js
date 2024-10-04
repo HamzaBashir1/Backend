@@ -28,6 +28,10 @@ const UserSchema = new mongoose.Schema(
     vatNumber: { type: String },  
     companyName: { type: String },  // VAT number for companies
     phonenumber: { type: String },  // Alternative phone number
+    favorites: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Accommodation',
+  }],
   },
   { timestamps: true } // Automatically add createdAt and updatedAt fields
 );
