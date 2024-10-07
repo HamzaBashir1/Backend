@@ -27,28 +27,11 @@ export const getUserAccommodations = async (req, res) => {
       return res.status(404).json({ message: "No accommodations found for this user" });
     }
 
+    res.status(200).json(accommodations);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
-// Check if user already posted ad so no ad posted again
-// export const getCheckAccommodations = async (req, res) => {
-//   const { userId } = req.params; 
-
-//   try {
-
-//     const accommodations = await Accommodation.find({ userId }).populate('userId', 'name email'); 
-
-//     // If accommodations exist, return that the user has already posted
-//     if (accommodations.length > 0) {
-//       return res.status(200).json({ hasPosted: true, message: "User has already posted an accommodation." });
-//     }
-
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
 
 // Get all accommodations
 export const getAccommodations = async (req, res) => {
@@ -129,27 +112,45 @@ export const deleteAccommodation = async (req, res) => {
 };
 
 // Search accommodations by property type
-export const searchAccommodationsByCategory = async (req, res) => {
+export const searchAccommodationsByCategorys = async (req, res) => {
   try {
-    const { category } = req.query; // Get the category from the query parameters
-    let filters = {};
+    const { category, city, country, location } = req.query; // Get query parameters
+    let filters = []; // Initialize an empty array for filters
 
-    // Check if category is provided and create filters accordingly
+    // Create filters based on provided query parameters
     if (category) {
-      filters.propertyType = category; // Set the property type filter
+      filters.push({ propertyType: category }); // Add category filter
     }
 
-    // Fetch accommodations that match the filters
-    const accommodations = await Accommodation.find(filters).populate('userId', 'name email'); // Optionally populate user info
+    if (city) {
+      filters.push({ 'locationDetails.city': city }); // Add city filter
+    }
 
-    // Check if any accommodations were found
+    if (country) {
+      filters.push({ 'locationDetails.country': country }); // Add country filter
+    }
+
+    if (location) {
+      filters.push({ 'location.address': location }); // Add location filter
+    }
+
+    // If no filters are provided, return all accommodations
+    if (filters.length === 0) {
+      const allAccommodations = await Accommodation.find().populate('userId', 'name email');
+      return res.status(200).json(allAccommodations);
+    }
+
+    // Fetch accommodations based on the provided filters using $or
+    const accommodations = await Accommodation.find({ $or: filters }).populate('userId', 'name email'); // Populate user details
+
+    // Return the accommodations, whether found or empty
     if (accommodations.length === 0) {
-      return res.status(404).json({ message: "No accommodations found for the selected category." });
+      return res.status(404).json({ message: "No accommodations found for the selected criteria." });
     }
 
-    res.status(200).json(accommodations); // Return the filtered accommodations
+    res.status(200).json(accommodations); 
   } catch (error) {
-    console.error(error); // Log the error for more detail
+    console.error(error);
     res.status(500).json({ error: 'Failed to fetch accommodations' });
   }
 };

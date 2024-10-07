@@ -1,10 +1,11 @@
 import express from "express";
-import { getAllReviews, createReview } from "../Controllers/ReviewController.js";
+import { getAllReviews, createReview, getReviewsByAccommodation } from "../Controllers/ReviewController.js";
 
 const router = express.Router({ mergeParams: true });
 
 // Get all reviews
 router.route("/").get(getAllReviews);
+router.route("/:accommodationId").get(getReviewsByAccommodation);
 
 // Create a review for a specific accommodation
 router.route("/:accommodationId")

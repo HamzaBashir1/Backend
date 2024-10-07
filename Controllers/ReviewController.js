@@ -13,6 +13,21 @@ export const getAllReviews = async (req, res) => {
     }
 };
 
+// Get reviews by accommodationId
+export const getReviewsByAccommodation = async (req, res) => {
+    const accommodationId = req.params.accommodationId;
+    // console.log("Accommodation ID:", accommodationId);  // Log the ID
+
+    try {
+        const reviews = await Review.find({ accommodation: accommodationId })
+            .populate('user', 'name photo'); 
+
+        res.status(200).json({ success: true, message: 'Successful', data: reviews });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+};
+
 // Create a review
 export const createReview = async (req, res) => {
     const { overallRating, categoryRatings, reviewText, pluses, cons } = req.body;

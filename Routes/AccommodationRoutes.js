@@ -8,16 +8,16 @@ import {
   deleteAccommodation,
   updateAccommodationByAccommodationId,
   getUserAccommodations,
-  searchAccommodationsByCategory,
   incrementViewCount,
   incrementClickCount,
-  customerInterest
+  customerInterest,
+  searchAccommodationsByCategorys
 } from '../Controllers/AccommodationController.js';
 
 const router = express.Router();
 
 // Search accommodations by category (this should be first)
-router.get("/accommodation/search", searchAccommodationsByCategory);
+router.get("/accommodation/search", searchAccommodationsByCategorys);
 router.post("/accommodation", createAccommodation);
 router.get("/accommodation", getAccommodations);
 router.get("/accommodation/:id", getAccommodationById);

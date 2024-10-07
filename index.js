@@ -19,11 +19,16 @@ import reviewRoutes from './Routes/ReviewRoutes.js';
 import EmailRoutes from './Routes/EmailRoutes.js';
 import ReservationRoutes from './Routes/ReservationRoutes.js';
 import FavoriteRoutes from './Routes/FavoriteRoutes.js'
+import BlogRoutes from "./Routes/BlogRoutes.js"
+import bodyParser from 'body-parser';
 
 dotenv.config();
 
 const app = express();
 const Port = process.env.Port || 8000;
+
+app.use(bodyParser.json({ limit: '10mb' })); // Adjust the limit as necessary
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 // CORS Options
 const corsOptions = {
@@ -40,6 +45,8 @@ app.use(cookieParser());
 
 // Create the HTTP server
 const server = http.createServer(app);
+
+// Initialize Socket.IO with the HTTP server
 const io = new Server(server, {
   cors: {
     origin: "https://www.putkoapp.online/",
@@ -84,24 +91,27 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/subscribe", EmailRoutes);
 app.use("/api/reservation", ReservationRoutes);
 app.use("/api/favorite", FavoriteRoutes);
+app.use("/api/blog", BlogRoutes);
 
 // Socket.IO connection
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
+  // Listen for 'send_message' event from clients
   socket.on('send_message', async (msg) => {
     try {
+      // Save the message to the database
       const newMessage = new Message({
         message: msg.message,
         sender: msg.sender,
         users: msg.users,
       });
-      await newMessage.save(); // Ensure to save the message if needed
+      // await newMessage.save();
 
+      // Emit the message to all clients
       io.emit('receive_message', newMessage);
     } catch (error) {
       console.error('Error saving message to database:', error);
-      socket.emit('error', 'Message could not be saved.'); // Notify the client
     }
   });
 

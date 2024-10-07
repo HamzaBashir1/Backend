@@ -38,6 +38,9 @@ const accommodationSchema = new mongoose.Schema({
       type: Number
     }
   },
+  bedroomCount: { type: Number, required: true },  // Number of bedrooms
+  bathroomCount: { type: Number, required: true }, // Number of bathrooms
+  person: {type: Number, required: true},
   locationDetails: {
     streetAndNumber: {
       type: String
@@ -83,7 +86,15 @@ const accommodationSchema = new mongoose.Schema({
           ]
         },
         distance: {
-          type: Number
+          type: Number,  // This already supports decimal numbers
+          required: true,
+          min: 0,  // Minimum value can be 0
+          validate: {
+            validator: function(value) {
+              return value >= 0;  // Only positive numbers
+            },
+            message: 'Distance cannot be negative'
+          }
         }
       }
     ]
@@ -218,10 +229,7 @@ const accommodationSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  totalRating: {
-    type: Number,
-    default: 0,
-  },
+  Reservation: [{ type: mongoose.Types.ObjectId, ref: "Reservation" }],
   occupancyCalendar: [
     {
       startDate: {

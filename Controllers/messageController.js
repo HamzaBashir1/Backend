@@ -1,5 +1,6 @@
 import Message from "../models/messageModel.js";
 import mongoose from "mongoose";
+import nodemailer from "nodemailer";
 
 // Add a new message
 export const addMessage = async (req, res) => {
@@ -57,3 +58,37 @@ export const getMessages = async (req, res) => {
   }
 };
 
+
+export async function handler(req, res) {
+  if (req.method === "POST") {
+    const { email, message } = req.body;
+
+    // Create reusable transporter object using SMTP transport
+    let transporter = nodemailer.createTransport({
+      service: 'gmail', // or other email service like SendGrid, Mailgun, etc.
+      auth: {
+        user: "sharjeelsohail279@gmail.com", // Your email address
+        pass: "iyip nosn bwem gwer", // Your email password or app-specific password
+      },
+    });
+
+    // Email options
+    let mailOptions = {
+      from: "sharjeelsohail279@gmail.com",
+      to: email, // Recipient email
+      subject: "Reservation Confirmation",
+      text: message,
+    };
+
+    // Send email
+    try {
+      await transporter.sendMail(mailOptions);
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.error("Error sending email", error);
+      res.status(500).json({ success: false, error: "Failed to send email" });
+    }
+  } else {
+    res.status(405).json({ message: "Only POST requests allowed" });
+  }
+}
