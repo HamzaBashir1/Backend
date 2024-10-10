@@ -104,6 +104,7 @@ io.on('connection', (socket) => {
       const newMessage = new Message({
         message: msg.message,
         sender: msg.sender,
+        reciver:msg.reciver,
         users: msg.users,
       });
       // await newMessage.save();
