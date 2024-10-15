@@ -79,7 +79,7 @@ export async function handler(req, res) {
       from: "sharjeelsohail279@gmail.com",
       to: email, // Recipient email
       subject: "Reservation Confirmation",
-      text: message,
+      html: message,
     };
 
     // Send email
@@ -94,10 +94,6 @@ export async function handler(req, res) {
     res.status(405).json({ message: "Only POST requests allowed" });
   }
 }
-
-
-//
-
 
 // Get all messages by second user ID in the users array
 export const getMessagesBySecondUser = async (req, res) => {
@@ -120,9 +116,7 @@ export const getMessagesBySecondUser = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error });
   }
 };
-//
 
-// Controller function to fetch receivers by sender
 // Controller function to fetch receivers by sender
 export const fetchReceiversBySender = async (req, res) => {
   const { senderId } = req.params; // Extract senderId from request parameters
@@ -198,11 +192,6 @@ export const getReceiversBySenderId = async (req, res) => {
     res.status(500).json({ error: 'Internal server error.' });
   }
 };
-
-//
-
-
-
 
 export const getSendersByReceiverId = async (req, res) => {
   const { receiverId } = req.params; // Extract receiverId from request parameters
