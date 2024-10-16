@@ -11,7 +11,8 @@ import {
   incrementViewCount,
   incrementClickCount,
   customerInterest,
-  searchAccommodationsByCategorys
+  searchAccommodationsByCategorys,
+  addToOccupancyCalendar
 } from '../Controllers/AccommodationController.js';
 
 const router = express.Router();
@@ -23,6 +24,7 @@ router.get("/accommodation", getAccommodations);
 router.get("/accommodation/:id", getAccommodationById);
 router.put("/accommodation/:id", updateAccommodation);
 router.get("/accommodation/user/:userId", getUserAccommodations);
+router.put("/accommodation/:id/occupancyCalendar", addToOccupancyCalendar);
 router.put("/accommodation/updateOccupancyCalendar/:userId", updateAccommodationByAccommodationId);
 router.delete("/accommodation/:id", deleteAccommodation);
 // Routes for incrementing view and click counts

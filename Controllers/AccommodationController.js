@@ -210,3 +210,38 @@ export const customerInterest = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const addToOccupancyCalendar = async (req, res) => {
+  const { id } = req.params; // Get accommodationId from the request parameters
+  const { startDate, endDate, guestName, status } = req.body; // Expecting occupancyCalendar entry data in request body
+
+  try {
+    // Use $push to add a new entry to the occupancyCalendar array without overwriting existing entries
+    const updatedAccommodation = await Accommodation.findByIdAndUpdate(
+      id, // Match the accommodation by its ID
+      {
+        $push: {
+          occupancyCalendar: {
+            startDate,
+            endDate,
+            guestName: guestName || 'q/a', // Default to 'N/A' if no guestName is provided
+            status: status || 'book', // Default to 'booked' if no status is provided
+          }
+        }
+      },
+      { new: true, useFindAndModify: false } // Return the updated document
+    );
+
+    // If the accommodation isn't found
+    if (!updatedAccommodation) {
+      return res.status(404).json({ message: "Accommodation not found" });
+    }
+
+    res.status(200).json({
+      message: "Occupancy Calendar updated successfully",
+      accommodation: updatedAccommodation,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

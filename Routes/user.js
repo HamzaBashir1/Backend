@@ -11,10 +11,9 @@ import {
 from "../Controllers/userController.js";
 import { authenticate, restrict } from "../auth/verifyToken.js";
 
-
-
 const router = express.Router();
 
+router.get("/:userId", getUserById);
 router.get('/:id', authenticate, restrict(['guest']), getSingleUser);
 router.get('/', authenticate, restrict(['admin']),  getAllUser);
 router.put('/:id', updateUser);

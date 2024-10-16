@@ -67,3 +67,26 @@ export const getUserProfile = async (req, res) => {
         res.status(500).json({ success: false, message: 'Something went wrong' });
     }
 };
+
+
+// Controller to get user by ID
+export const getUserById = async (req, res) => {
+    const { userId } = req.params;
+  
+    try {
+      // Fetch user by ID from the database
+      const user = await User.findById(userId);
+  
+      // If the user doesn't exist, return a 404
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // Return the user data
+      res.status(200).json(user);
+    } catch (error) {
+      // Handle errors and return a 500 status code
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
