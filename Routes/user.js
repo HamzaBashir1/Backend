@@ -7,6 +7,7 @@ import {
     getAllUser, 
     getSingleUser,
     getUserProfile,
+    getUserById,
 } 
 from "../Controllers/userController.js";
 import { authenticate, restrict } from "../auth/verifyToken.js";
