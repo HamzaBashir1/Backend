@@ -12,7 +12,8 @@ import {
   incrementClickCount,
   customerInterest,
   searchAccommodationsByCategorys,
-  addToOccupancyCalendar
+  addToOccupancyCalendar,
+  deleteOccupancyEntry
 } from '../Controllers/AccommodationController.js';
 
 const router = express.Router();
