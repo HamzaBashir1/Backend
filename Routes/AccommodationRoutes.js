@@ -23,6 +23,7 @@ router.post("/accommodation", createAccommodation);
 router.get("/accommodation", getAccommodations);
 router.get("/accommodation/:id", getAccommodationById);
 router.put("/accommodation/:id", updateAccommodation);
+router.delete("/:accommodationId/occupancy/:entryId", deleteOccupancyEntry);
 router.get("/accommodation/user/:userId", getUserAccommodations);
 router.put("/accommodation/:id/occupancyCalendar", addToOccupancyCalendar);
 router.put("/accommodation/updateOccupancyCalendar/:userId", updateAccommodationByAccommodationId);

@@ -245,3 +245,32 @@ export const addToOccupancyCalendar = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const deleteOccupancyEntry = async (req, res) => {
+  const { accommodationId, entryId } = req.params; // Get accommodationId and entryId from request parameters
+
+  try {
+    // Find the accommodation by ID
+    const accommodation = await Accommodation.findById(accommodationId);
+    
+    if (!accommodation) {
+      return res.status(404).json({ message: "Accommodation not found." });
+    }
+
+    // Remove the specific occupancyCalendar entry by entryId
+    accommodation.occupancyCalendar = accommodation.occupancyCalendar.filter(
+      (entry) => entry._id.toString() !== entryId // Filter out the entry with the matching ID
+    );
+
+    // Save the updated accommodation document
+    await accommodation.save();
+
+    res.status(200).json({
+      message: "Occupancy entry deleted successfully.",
+      occupancyCalendar: accommodation.occupancyCalendar, // Return the updated calendar
+    });
+  } catch (error) {
+    console.error("Error deleting occupancy entry:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
