@@ -1,12 +1,15 @@
 import express from 'express';
 import passport from '../Controllers/passport.js';
-import { register, login } from '../Controllers/authController.js';
+import { register, login, requestPasswordReset, resetPassword, verifyEmail } from '../Controllers/authController.js';
 
 const router = express.Router();
 
 // Existing routes for email/password authentication
 router.post('/register', register);
 router.post('/login', login);
+router.post('/password-reset-request', requestPasswordReset); // New route
+router.post('/reset-password', resetPassword); // New route
+router.get('/verify-email/:token', verifyEmail);
 
 // Google OAuth routes
 router.get('/google', passport.authenticate('google', {
