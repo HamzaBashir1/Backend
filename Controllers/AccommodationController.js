@@ -274,3 +274,84 @@ export const deleteOccupancyEntry = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+//  Get search  accommodation by ID
+export const searchAccommodationsByCategory = async (req, res) => {
+  try {
+    const {
+      category,
+      city,
+      country,
+      location,
+      minPrice,
+      maxPrice,
+      pets,
+      smoking,
+      parking,
+      person,
+      bedroomCount, // Bedrooms filter
+      bathroomCount, // Bathrooms filter
+      equipmentAndServices, // Services filter (array matching)
+    } = req.query; // Extract query parameters
+
+    let filters = {}; // Initialize an empty object to store filters
+
+    // Build dynamic filters based on available query parameters
+    if (category) filters.propertyType = category; // Filter by property type
+    if (city) filters['locationDetails.city'] = city; // Filter by city
+    if (country) filters['locationDetails.country'] = country; // Filter by country
+    if (location) filters['location.address'] = location; // Filter by location
+
+    // Add price range filter
+    if (minPrice || maxPrice) {
+      filters.price = {}; // Initialize price filter object
+      if (minPrice) filters.price.$gte = parseFloat(minPrice); // Minimum price
+      if (maxPrice) filters.price.$lte = parseFloat(maxPrice); // Maximum price
+    }
+
+    // Filter by pets, smoking, and parking policies (exact match)
+    if (pets) filters.pets = pets;
+    if (smoking) filters.smoking = smoking;
+    if (parking) filters.parking = parking;
+
+    // Filter by number of persons
+    if (person) filters.person = parseInt(person); // Ensure it's a number
+
+    
+    // Parse equipmentAndServices if passed as a stringified array (e.g., "[wifi,Parking]")
+    if (equipmentAndServices) {
+      let servicesArray;
+      try {
+        servicesArray = JSON.parse(equipmentAndServices); // Attempt to parse JSON
+      } catch (error) {
+        // Fallback: If JSON parsing fails, treat it as a comma-separated string
+        servicesArray = equipmentAndServices
+          .replace(/\[|\]/g, '') // Remove square brackets
+          .split(',') // Split by commas
+          .map((service) => service.trim()); // Trim whitespace
+      }
+
+      // Apply MongoDB `$in` operator to match any of the services
+      filters.equipmentAndServices = { $in: servicesArray };
+    }
+
+    // Filter by bedroom count (<= specified number)
+    if (bedroomCount) filters.bedroomCount = { $lte: parseInt(bedroomCount) };
+
+    // Filter by bathroom count (<= specified number)
+    if (bathroomCount) filters.bathroomCount = { $lte: parseInt(bathroomCount) };
+// Query the database with the constructed filters
+    const accommodations = await Accommodation.find(filters).populate('userId', 'name email');
+
+    // Handle the case where no accommodations are found
+    if (accommodations.length === 0) {
+      return res.status(404).json({ message: 'No accommodations found for the selected criteria.' });
+    }
+
+    // Return the matching accommodations
+    res.status(200).json(accommodations);
+  } catch (error) {
+    console.error('Error fetching accommodations:', error);
+    res.status(500).json({ error: 'Failed to fetch accommodations' });
+  }
+};

@@ -13,12 +13,14 @@ import {
   customerInterest,
   searchAccommodationsByCategorys,
   addToOccupancyCalendar,
-  deleteOccupancyEntry
+  deleteOccupancyEntry,
+  searchAccommodationsByCategory
 } from '../Controllers/AccommodationController.js';
 
 const router = express.Router();
 
 // Search accommodations by category (this should be first)
+router.get("/accommodations/searching", searchAccommodationsByCategory);
 router.get("/accommodation/search", searchAccommodationsByCategorys);
 router.post("/accommodation", createAccommodation);
 router.get("/accommodation", getAccommodations);
