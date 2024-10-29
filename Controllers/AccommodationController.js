@@ -345,7 +345,7 @@ export const searchAccommodationsByCategory = async (req, res) => {
 
     // Handle the case where no accommodations are found
     if (accommodations.length === 0) {
-      return res.status(404).json({ message: 'No accommodations found for the selected criteria.' });
+      return res.status(200).json({ message: 'No accommodations found for the selected criteria.' });
     }
 
     // Return the matching accommodations
