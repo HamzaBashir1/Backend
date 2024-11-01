@@ -22,6 +22,7 @@ import FavoriteRoutes from './Routes/FavoriteRoutes.js'
 import BlogRoutes from "./Routes/BlogRoutes.js"
 import bodyParser from 'body-parser';
 import CalendarRoutes from './Routes/CalendarRoutes.js'
+import Writemessage from "./Routes/WritemessageRoutes.js"
 
 dotenv.config();
 
@@ -94,6 +95,7 @@ app.use("/api/reservation", ReservationRoutes);
 app.use("/api/favorite", FavoriteRoutes);
 app.use("/api/blog", BlogRoutes);
 app.use("/api", CalendarRoutes); 
+app.use("/api/messages", Writemessage); 
 
 // Socket.IO connection
 io.on('connection', (socket) => {
