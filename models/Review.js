@@ -10,12 +10,22 @@ const reviewSchema = new mongoose.Schema({
   user: {
     type: mongoose.Types.ObjectId,
     ref: 'User',
-    required: false,
+    required: true,
+  },
+  userReview: {
+    type: mongoose.Types.ObjectId,
+    ref: 'User',
+    required: true,
   },
   reviewText: {
     type: String,
     required: true,
   },
+  name: {
+      type: String,
+      required: true,
+        // Optional: trims any extra spaces
+    },
   pluses: String,
   cons: String,
   overallRating: {

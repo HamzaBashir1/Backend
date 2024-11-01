@@ -16,7 +16,7 @@ const router = express.Router();
 
 router.get("/:userId", getUserById);
 router.get('/:id', authenticate, restrict(['guest']), getSingleUser);
-router.get('/', authenticate, restrict(['admin']),  getAllUser);
+router.get('/',  getAllUser);
 router.put('/:id', updateUser);
 router.delete('/:id', deleteUser);
 router.get('/profile/me/:id', authenticate, restrict(['guest']), getUserProfile);

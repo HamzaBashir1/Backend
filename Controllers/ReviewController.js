@@ -11,7 +11,7 @@ export const getAllReviews = async (req, res) => {
     } catch (err) {
         res.status(404).json({ success: false, message: 'Not found', error: err.message });
     }
-};
+}; 
 
 // Get reviews by accommodationId
 export const getReviewsByAccommodation = async (req, res) => {
@@ -30,10 +30,11 @@ export const getReviewsByAccommodation = async (req, res) => {
 
 // Create a review
 export const createReview = async (req, res) => {
-    const { overallRating, categoryRatings, reviewText, pluses, cons } = req.body;
+    const { overallRating, categoryRatings, reviewText, pluses, cons ,name,userReview} = req.body;
 
     if (!req.body.accommodation) req.body.accommodation = req.params.accommodationId; // Update reference
     if (!req.body.user) req.body.user = req.userId;
+    // if (!req.body.userReview) req.body.userReview = req.userId;
 
     // Validate required fields
     if (!overallRating || overallRating < 1 || overallRating > 5) {
@@ -43,11 +44,14 @@ export const createReview = async (req, res) => {
     if (!reviewText) {
         return res.status(400).json({ success: false, message: "Review text is required." });
     }
-
+    if (!name) {
+        return res.status(400).json({ success: false, message: "name text is required." });
+    }
     // Create new review object with additional fields
     const newReview = new Review({
         accommodation: req.body.accommodation,
         user: req.body.user,
+        userReview,
         overallRating,
         categoryRatings: {
             Location: categoryRatings?.Location || 0,
@@ -59,6 +63,7 @@ export const createReview = async (req, res) => {
             Activities: categoryRatings?.Activities || 0,
             PriceQuality: categoryRatings?.PriceQuality || 0
         },
+        name,
         reviewText,
         pluses,
         cons
