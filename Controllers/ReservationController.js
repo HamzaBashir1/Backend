@@ -132,3 +132,26 @@ export const getReservationByAccommodationProvider = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Get reservations by user ID
+export const getReservationsByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Validate if the provided userId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    // Find reservations that match the user ID
+    const reservations = await Reservation.find({ userId: userId }).populate('userId accommodationId');
+
+    if (!reservations.length) {
+      return res.status(404).json({ message: 'No reservations found for the given user' });
+    }
+
+    res.status(200).json(reservations);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

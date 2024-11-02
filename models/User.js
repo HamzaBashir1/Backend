@@ -27,7 +27,7 @@ const UserSchema = new mongoose.Schema(
     tin: { type: String },  // Tax Identification Number
     vatNumber: { type: String },  
     companyName: { type: String },  // VAT number for companies
-    phonenumber: { type: String },  // Alternative phone number
+    phoneNumber: { type: String },  // Alternative phone number
     favorites: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Accommodation',
