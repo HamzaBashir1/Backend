@@ -125,7 +125,7 @@ const accommodationSchema = new mongoose.Schema({
   // Add userId to reference the user who created the accommodation
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
+    ref: 'Host', // Reference to the User model
     required: true // Ensure that every accommodation has a user associated with it
   },
   arrivalAndDeparture: {

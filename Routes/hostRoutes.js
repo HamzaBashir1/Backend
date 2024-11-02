@@ -1,27 +1,23 @@
-import express from 'express';
-import {
-  createHost,
-  getHostById,
-  getAllHosts,
-  updateHost,
-  deleteHost
-} from '../Controllers/HostController.js'; // Adjust the path as needed
+import express from "express";
+import { 
+    updateHost,
+    deleteHost,
+    getAllHosts,
+    getSingleHost,
+    getHostProfile,
+    getHostById,
+} 
+from "../Controllers/hostController.js";
+import { authenticate, restrict } from "../auth/verifyToken.js";
 
 const router = express.Router();
 
-// Create a new host
-router.post('/hosts', createHost);
-
-// Retrieve a host by ID
-router.get('/hosts/:id', getHostById);
-
-// List all hosts
-router.get('/hosts', getAllHosts);
-
-// Update a host by ID
-router.put('/hosts/:id', updateHost);
-
-// Delete a host by ID
-router.delete('/hosts/:id', deleteHost);
+// Public route for fetching host by ID
+router.get("/:userId", getHostById);
+router.get('/:id', authenticate, restrict(['host']), getSingleHost);
+router.get('/', getAllHosts);
+router.put('/:id', updateHost);
+router.delete('/:id', deleteHost);
+router.get('/profile/me/:id', authenticate, restrict(['host']), getHostProfile);
 
 export default router;

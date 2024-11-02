@@ -9,7 +9,7 @@ router.post('/register', register);
 router.post('/login', login);
 router.post('/password-reset-request', requestPasswordReset); // New route
 router.post('/reset-password', resetPassword); // New route
-router.get('/verify-email/:token', verifyEmail);
+router.get('/verify-email/:role/:token', verifyEmail);
 
 // Google OAuth routes
 router.get('/google', passport.authenticate('google', {
@@ -18,7 +18,7 @@ router.get('/google', passport.authenticate('google', {
 
 router.get('/google/callback', passport.authenticate('google'), (req, res) => {
   // Successful authentication
-  res.redirect('https://www.putkoapp.online/Profile'); // Redirect to your profile page or wherever you want
+  res.redirect('https://www.putkoapp.online/Guest'); // Redirect to your profile page or wherever you want
 });
 
 // Logout route

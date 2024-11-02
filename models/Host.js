@@ -1,18 +1,28 @@
 import mongoose from 'mongoose';
 
 const HostSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: false
-  },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: false },
+    name: { type: String, required: true },
+    phone: { type: String }, // Changed from Number to String
+    photo: { type: String },
+    role: {
+      type: String,
+      enum: ["host", "admin"],
+      default: "host",
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+      default: "other",
+    },
   phoneNumber: {
     type: String,
-    required: true
+    required: false
   },
   planName: {
     type: String,
-    required: true
+    required: false
   },
   websiteInformation: {
     type: String,
@@ -24,36 +34,44 @@ const HostSchema = new mongoose.Schema({
   },
   companyName: {
     type: String,
-    required: true
+    required: false
   },
   streetNumber: {
     type: String,
-    required: true
+    required: false
   },
   city: {
     type: String,
-    required: true
+    required: false
   },
   zipcode: {
     type: String,
-    required: true
+    required: false
   },
   country: {
     type: String,
-    required: true
+    required: false
   },
   idNumber: {
     type: String,
-    required: true
+    required: false
   },
   tin: {
     type: String,
-    required: true
+    required: false
   },
   vatNumber: {
     type: String,
-    required: true
-  }
+    required: false
+  },
+  favorites: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Accommodation',
+}],
+// Reset Password Fields
+resetPasswordToken: { type: String },
+resetPasswordExpires: { type: Date },
+isVerified: { type: Boolean, default: false },
 }, { timestamps: true });
 
 const Host = mongoose.model('Host', HostSchema);

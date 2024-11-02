@@ -85,7 +85,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api', HostRoutes);
+app.use('/api/hosts', HostRoutes);
 app.use('/api', InvoiceRoutes);
 app.use('/api', accommodationRoutes);
 app.use('/api', messageRoutes);

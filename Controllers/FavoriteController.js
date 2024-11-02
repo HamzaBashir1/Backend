@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import Accommodation from '../models/Accommodation.js';
+import Host from '../models/Host.js';
 
 // Add an accommodation to favorites
 export const addFavorite = async (req, res) => {
@@ -10,9 +11,12 @@ export const addFavorite = async (req, res) => {
             return res.status(400).json({ error: 'User ID and Accommodation ID are required' });
         }
 
-        // Check if the user exists
+        // Check if the user exists in either User or Host models
         const user = await User.findById(userId);
-        if (!user) {
+        const host = await Host.findById(userId);
+        const account = user || host;
+
+        if (!account) {
             return res.status(404).json({ error: 'User not found' });
         }
 
@@ -23,13 +27,13 @@ export const addFavorite = async (req, res) => {
         }
 
         // Check if the accommodation is already in favorites
-        if (user.favorites.includes(accommodationId)) {
+        if (account.favorites.includes(accommodationId)) {
             return res.status(400).json({ error: 'Accommodation already in favorites' });
         }
 
         // Add the accommodation to the user's favorites
-        user.favorites.push(accommodationId);
-        await user.save();
+        account.favorites.push(accommodationId);
+        await account.save();
 
         res.status(200).json({ message: 'Added to favorites successfully' });
     } catch (error) {
@@ -47,15 +51,18 @@ export const removeFavorite = async (req, res) => {
             return res.status(400).json({ error: 'User ID and Accommodation ID are required' });
         }
 
-        // Check if the user exists
+        // Check if the user exists in either User or Host models
         const user = await User.findById(userId);
-        if (!user) {
+        const host = await Host.findById(userId);
+        const account = user || host;
+
+        if (!account) {
             return res.status(404).json({ error: 'User not found' });
         }
 
         // Remove the accommodation from favorites
-        user.favorites = user.favorites.filter(favId => favId.toString() !== accommodationId);
-        await user.save();
+        account.favorites = account.favorites.filter(favId => favId.toString() !== accommodationId);
+        await account.save();
 
         res.status(200).json({ message: 'Removed from favorites successfully' });
     } catch (error) {
@@ -73,15 +80,20 @@ export const getFavorites = async (req, res) => {
             return res.status(400).json({ error: 'User ID is required' });
         }
 
-        // Check if the user exists
+        // Check if the user exists in either User or Host models
         const user = await User.findById(userId).populate('favorites');
-        if (!user) {
+        const host = await Host.findById(userId).populate('favorites');
+        const account = user || host;
+
+        if (!account) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        res.status(200).json({ favorites: user.favorites });
+        // Access favorites through account (either user or host)
+        res.status(200).json({ favorites: account.favorites });
     } catch (error) {
         console.error("Error in getFavorites controller:", error.message);
         res.status(500).json({ error: error.message || 'Server error' });
     }
 };
+
