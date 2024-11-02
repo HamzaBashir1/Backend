@@ -7,7 +7,7 @@ import {
     getHostProfile,
     getHostById,
 } 
-from "../Controllers/hostController.js";
+from "../Controllers/HostController.js";
 import { authenticate, restrict } from "../auth/verifyToken.js";
 
 const router = express.Router();
