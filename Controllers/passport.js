@@ -1,6 +1,9 @@
 import passport from 'passport';
 import GoogleStrategy from 'passport-google-oauth20';
 import User from '../models/User.js'; // Adjust the path as necessary
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'your_jwt_secret_key';
 
 passport.use(new GoogleStrategy({
   clientID: "951178339713-u813sl2r7vhnr6qh19a20c5qdkfm7k19.apps.googleusercontent.com", // Ensure this is defined in .env
@@ -26,7 +29,18 @@ async (accessToken, refreshToken, profile, done) => {
       isVerified: true // Automatically set to true for Google OAuth users
     });
     await user.save();
-    done(null, user);
+
+    // Generate a JWT token
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role
+      },
+      JWT_SECRET_KEY,
+      { expiresIn: '1d' } // Set token expiration as needed
+    );
+
+    done(null, { user, token });
   } catch (err) {
     done(err);
   }
