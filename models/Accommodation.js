@@ -11,6 +11,9 @@ const accommodationSchema = new mongoose.Schema({
   url: {
     type: String
   },
+  virtualTourUrl: {
+    type: String
+  },
   propertyType: {
     type: String,
     enum: [
