@@ -104,7 +104,7 @@ export const login = async (req, res) => {
 
     //check if user exist or not
     if (!user) {
-      return res.Status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     // Ensure the user is verified
@@ -149,7 +149,7 @@ export const requestPasswordReset = async (req, res) => {
 
     //check if user exist or not
     if (!user) {
-      return res.Status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     const resetToken = generateToken(user);
