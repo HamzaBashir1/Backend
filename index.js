@@ -101,20 +101,31 @@ app.use("/api/messages", Writemessage);
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
-  // Listen for 'send_message' event from clients
   socket.on('send_message', async (msg) => {
     try {
-      // Save the message to the database
       const newMessage = new Message({
         message: msg.message,
         sender: msg.sender,
-        reciver:msg.reciver,
+        reciver: msg.reciver,
         users: msg.users,
       });
+      
+      // Save the message to the database
       // await newMessage.save();
 
       // Emit the message to all clients
       io.emit('receive_message', newMessage);
+
+      // Log the sender and receiver IDs for notification
+      console.log(`Notification: User ID: ${msg.sender}, Host ID: ${msg.reciver}`);
+
+      // Emit a notification event
+      io.to(socket.id).emit('notification', {
+        message: 'New message received',
+        sender: msg.sender,
+        reciver: msg.reciver,
+      });
+
     } catch (error) {
       console.error('Error saving message to database:', error);
     }
