@@ -92,8 +92,8 @@ export const login = async (req, res) => {
   try {
     let user = null;
 
-    const guest = await User.findOne({ email });
-    const host = await Host.findOne({ email });
+    const guest = await User.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
+    const host = await Host.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
 
     if (guest) {
       user = guest;
@@ -137,8 +137,8 @@ export const requestPasswordReset = async (req, res) => {
   try {
     let user = null;
 
-    const guest = await User.findOne({ email });
-    const host = await Host.findOne({ email });
+    const guest = await User.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
+    const host = await Host.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
 
     if (guest) {
       user = guest;
