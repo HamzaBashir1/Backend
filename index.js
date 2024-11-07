@@ -51,7 +51,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO with the HTTP server
 const io = new Server(server, {
   cors: {
-    origin: "https://www.putkoapp.online/",
+    origin: "https://www.putkoapp.online",
     credentials: true,
   },
 });
