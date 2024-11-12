@@ -53,22 +53,23 @@ export const getReservationById = async (req, res) => {
 // Update a reservation
 export const updateReservationByName = async (req, res) => {
   try {
-    const { name } = req.params;  // Extract reservation name from the URL parameters
-    const updates = req.body;     // Reservation updates from the request body
+    const { name } = req.params; // Extract reservation name from URL parameters
+    const updates = req.body; // Reservation updates from the request body
 
     // Find the reservation by name (case-insensitive search) and update it
     const updatedReservation = await Reservation.findOneAndUpdate(
-      { name: { $regex: name, $options: 'i' } },  // Case-insensitive search by name
-      { $set: updates },   // Apply updates to the fields
+      { name: { $regex: name, $options: 'i' } }, // Case-insensitive search by name
+      { $set: updates }, // Apply updates to the fields
       { new: true, runValidators: true } // Return the updated document and run validators
-    ).populate('userId accommodationId');
+    )
+    .populate('accommodationId') // Populate accommodationId if needed
+    .select('-userId'); // Exclude userId from results
 
     // If reservation not found
     if (!updatedReservation) {
       return res.status(404).json({ message: `No reservation found for the name "${name}"` });
     }
 
-    // Return the updated reservation
     res.status(200).json(updatedReservation);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -97,7 +98,9 @@ export const getReservationByName = async (req, res) => {
     // Find reservations where the name matches (case-insensitive search)
     const reservations = await Reservation.find({
       name: { $regex: name, $options: 'i' } // Case-insensitive search
-    }).populate('userId accommodationId');
+    })
+    .populate('accommodationId') // Populate accommodationId as needed
+    .select('-userId'); // Exclude userId field from results
 
     if (!reservations.length) {
       return res.status(404).json({ message: 'No reservations found for the given name' });
@@ -108,6 +111,7 @@ export const getReservationByName = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 // Get reservations by accommodation provider ID
 export const getReservationByAccommodationProvider = async (req, res) => {
   try {
@@ -121,7 +125,7 @@ export const getReservationByAccommodationProvider = async (req, res) => {
     // Find reservations that match the accommodation provider ID
     const reservations = await Reservation.find({
       accommodationProvider: providerId
-    }).populate('userId accommodationId');
+    }).populate('accommodationId');
 
     if (!reservations.length) {
       return res.status(404).json({ message: 'No reservations found for the given accommodation provider' });

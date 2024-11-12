@@ -69,11 +69,11 @@ const reservationSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
-    required: true // Ensure that every accommodation has a user associated with it
-  },
+  // userId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'User', // Reference to the User model
+  //   required: true // Ensure that every accommodation has a user associated with it
+  // },
   accommodationId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
