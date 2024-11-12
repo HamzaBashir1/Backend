@@ -160,6 +160,28 @@ export const getReservationsByUserId = async (req, res) => {
   }
 };
 
+// Get reservations by email
+export const getReservationByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    // Find reservations where the email matches (case-insensitive search)
+    const reservations = await Reservation.find({
+      email: { $regex: email, $options: 'i' } // Case-insensitive search
+    })
+    .populate('accommodationId') // Populate accommodationId as needed
+    .select('-userId'); // Exclude userId field from results
+
+    if (!reservations.length) {
+      return res.status(404).json({ message: 'No reservations found for the given email' });
+    }
+
+    res.status(200).json(reservations);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Delete reservations by user ID
 export const deleteReservationsByUserId = async (req, res) => {
   try {
