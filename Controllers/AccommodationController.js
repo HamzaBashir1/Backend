@@ -291,7 +291,9 @@ export const searchAccommodationsByCategory = async (req, res) => {
       person,
       bedroomCount, // Bedrooms filter
       bathroomCount, // Bathrooms filter
-      equipmentAndServices, // Services filter (array matching)
+      equipmentAndServices,
+      startDate, // Start date filter
+      endDate, // Services filter (array matching)
     } = req.query; // Extract query parameters
 
     let filters = {}; // Initialize an empty object to store filters
@@ -340,6 +342,27 @@ export const searchAccommodationsByCategory = async (req, res) => {
 
     // Filter by bathroom count (<= specified number)
     if (bathroomCount) filters.bathroomCount = { $lte: parseInt(bathroomCount) };
+   
+   
+    // Filter by occupancy dates, ensuring that the accommodation is available for the specified range
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      filters.occupancyCalendar = {
+        $not: {
+          $elemMatch: {
+            $or: [
+              { startDate: { $lt: end, $gte: start } },  // Partially overlaps with the end
+              { endDate: { $gt: start, $lte: end } },    // Partially overlaps with the start
+              { startDate: { $lte: start }, endDate: { $gte: end } } // Fully contains the date range
+            ],
+            status: "booked" // Ensure only booked status is checked
+          }
+        }
+      };
+    }
+
 // Query the database with the constructed filters
     const accommodations = await Accommodation.find(filters).populate('userId', 'name email');
 
@@ -355,3 +378,4 @@ export const searchAccommodationsByCategory = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch accommodations' });
   }
 };
+ 

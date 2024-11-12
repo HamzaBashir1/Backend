@@ -155,3 +155,26 @@ export const getReservationsByUserId = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Delete reservations by user ID
+export const deleteReservationsByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Validate if the provided userId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    // Delete all reservations that match the user ID
+    const deletedReservations = await Reservation.deleteMany({ userId: userId });
+
+    if (deletedReservations.deletedCount === 0) {
+      return res.status(404).json({ message: 'No reservations found for the given user' });
+    }
+
+    res.status(200).json({ message: 'Reservations deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
