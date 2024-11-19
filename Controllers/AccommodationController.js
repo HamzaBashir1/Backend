@@ -283,7 +283,7 @@ export const searchAccommodationsByCategory = async (req, res) => {
       city,
       country,
       location,
-      minPrice,
+      minPrice, 
       maxPrice,
       pets,
       smoking,
@@ -317,9 +317,10 @@ export const searchAccommodationsByCategory = async (req, res) => {
     if (parking) filters.parking = parking;
 
     // Filter by number of persons
-    if (person) filters.person = parseInt(person); // Ensure it's a number
-
+    if (person) filters.person = { $lte: parseInt(person)}; // Ensure it's a number
+ 
     
+    // if (bedroomCount) filters.bedroomCount = { $lte: parseInt(bedroomCount) };
     // Parse equipmentAndServices if passed as a stringified array (e.g., "[wifi,Parking]")
     if (equipmentAndServices) {
       let servicesArray;

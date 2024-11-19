@@ -160,28 +160,6 @@ export const getReservationsByUserId = async (req, res) => {
   }
 };
 
-// Get reservations by email
-export const getReservationByEmail = async (req, res) => {
-  try {
-    const { email } = req.params;
-
-    // Find reservations where the email matches (case-insensitive search)
-    const reservations = await Reservation.find({
-      email: { $regex: email, $options: 'i' } // Case-insensitive search
-    })
-    .populate('accommodationId') // Populate accommodationId as needed
-    .select('-userId'); // Exclude userId field from results
-
-    if (!reservations.length) {
-      return res.status(404).json({ message: 'No reservations found for the given email' });
-    }
-
-    res.status(200).json(reservations);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 // Delete reservations by user ID
 export const deleteReservationsByUserId = async (req, res) => {
   try {
@@ -202,5 +180,40 @@ export const deleteReservationsByUserId = async (req, res) => {
     res.status(200).json({ message: 'Reservations deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+
+// Update Reservation Controller
+export const updateReservation = async (req, res) => {
+  const { id } = req.params; // Reservation ID from the URL
+  const updateData = req.body; // Data to update from the request body
+
+  try {
+    // Validate reservation ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid reservation ID" });
+    }
+
+    // Find the reservation by ID and update
+    const updatedReservation = await Reservation.findByIdAndUpdate(
+      id,
+      updateData, // Fields to update
+      { new: true, runValidators: true } // Return the updated document and validate data
+    );
+
+    // Check if the reservation exists
+    if (!updatedReservation) {
+      return res.status(404).json({ error: "Reservation not found" });
+    }
+
+    // Respond with the updated reservation
+    res.status(200).json({
+      message: "Reservation updated successfully",
+      reservation: updatedReservation,
+    });
+  } catch (error) {
+    // Handle errors
+    res.status(500).json({ error: error.message });
   }
 };
