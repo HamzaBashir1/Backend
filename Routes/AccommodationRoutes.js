@@ -14,7 +14,8 @@ import {
   searchAccommodationsByCategorys,
   addToOccupancyCalendar,
   deleteOccupancyEntry,
-  searchAccommodationsByCategory
+  searchAccommodationsByCategory,
+  deleteAccommodationImages
 } from '../Controllers/AccommodationController.js';
 
 const router = express.Router();
@@ -31,6 +32,7 @@ router.get("/accommodation/user/:userId", getUserAccommodations);
 router.put("/accommodation/:id/occupancyCalendar", addToOccupancyCalendar);
 router.put("/accommodation/updateOccupancyCalendar/:userId", updateAccommodationByAccommodationId);
 router.delete("/accommodation/:id", deleteAccommodation);
+router.delete("/accommodation/:id/images", deleteAccommodationImages);
 // Routes for incrementing view and click counts
 router.put('/accommodation/:id/view', incrementViewCount);
 router.put('/accommodation/:id/click', incrementClickCount);

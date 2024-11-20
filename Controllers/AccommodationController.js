@@ -1,4 +1,5 @@
 import Accommodation from "../models/Accommodation.js";
+import mongoose from "mongoose";
 
 // Create a new accommodation
 export const createAccommodation = async (req, res) => {
@@ -380,3 +381,52 @@ export const searchAccommodationsByCategory = async (req, res) => {
   }
 };
  
+export const deleteAccommodationImages = async (req, res) => {
+  const { imageToDelete } = req.body;
+
+  // Validate `imageToDelete` from request body
+  if (!imageToDelete || typeof imageToDelete !== "string") {
+    return res.status(400).json({
+      message: "Please provide a valid image URL to delete",
+    });
+  }
+
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      message: "Invalid accommodation ID format",
+    });
+  }
+
+  try {
+    const accommodation = await Accommodation.findById(id);
+    if (!accommodation) {
+      return res.status(404).json({
+        message: "Accommodation not found",
+      });
+    }
+
+    if (!accommodation.images.includes(imageToDelete)) {
+      return res.status(400).json({
+        message: "The provided image URL was not found in the accommodation's images",
+      });
+    }
+
+    accommodation.images = accommodation.images.filter(
+      (image) => image !== imageToDelete
+    );
+    await accommodation.save();
+
+    return res.status(200).json({
+      message: "Image deleted successfully",
+      deletedImage: imageToDelete,
+      remainingImages: accommodation.images,
+    });
+  } catch (error) {
+    console.error("Error deleting image:", error.message);
+    return res.status(500).json({
+      message: "An error occurred while deleting the image",
+      error: error.message,
+    });
+  }
+};
