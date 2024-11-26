@@ -22,9 +22,23 @@ const accommodationSchema = new mongoose.Schema({
       'Campsites', 'Treehouses', 'Houseboats', 'Rooms', 'Entire Homes', 'Luxury Accommodation'
     ]
   },
-  price: {
+  rentalform: {
+    type: String,
+    enum: [
+      'Entire place', 'Private room', 'Share room'
+    ]
+  },
+  excludedDates: {
+    type: [Date], // Array of Date objects
+    default: [],
+  },
+  priceMonThus: {
     type: Number,
-    required: false
+    required: true
+  },
+  priceFriSun: {
+    type: Number,
+    required: true
   },
   discount: {
     type: Number
@@ -41,11 +55,25 @@ const accommodationSchema = new mongoose.Schema({
       type: Number
     }
   },
-  bedroomCount: { type: Number, required: true },  // Number of bedrooms
-  bathroomCount: { type: Number, required: true }, // Number of bathrooms
+  acreage: {
+    type: String,
+    enum: [
+      '100', '200', '300', '400', '500'
+    ]
+  },
+  tags: { type: [String], default: [] },
+  nightMin: { type: Number, required: true },
+  nightMax: { type: Number, required: true },
+  Beds: { type: Number,  },
+  Kitchen: { type: Number, },
+  bedroom: { type: Number,  },  // Number of bedrooms
+  bathroom: { type: Number, }, // Number of bathrooms
   person: {type: Number, required: true},
   locationDetails: {
     streetAndNumber: {
+      type: String
+    },
+    roomNumber: {
       type: String
     },
     city: {
@@ -57,73 +85,9 @@ const accommodationSchema = new mongoose.Schema({
     country: {
       type: String
     },
-    locationDescription: {
+    state: {
       type: String
     },
-    placesNearby: [
-      {
-        placeType: {
-          type: String,
-          enum: [
-              'Restaurant',
-              'Supermarket',
-              'BusStation',
-              'TrainStation',
-              'Airport',
-              'SkiSlope',
-              'AquaPark',
-              'TouristTrail',
-              'CycleRoute',
-              'ATM',
-              'GasStation',
-              'ChargingStation',
-              'CableCar',
-              'SwimmingPool',
-              'WaterArea',
-              'TheSea',
-              'Beach',
-              'Castle',
-              'Zoo',
-              'Museum',
-              'BusinessCenter',
-          ]
-        },
-        distance: {
-          type: Number,  // This already supports decimal numbers
-          required: true,
-          min: 0,  // Minimum value can be 0
-          validate: {
-            validator: function(value) {
-              return value >= 0;  // Only positive numbers
-            },
-            message: 'Distance cannot be negative'
-          }
-        }
-      }
-    ]
-  },
-  contactDetails: {
-    host: {
-      type: String,
-      required: false
-    },
-    phone: {
-      type: String,
-      required: false
-    },
-    email: {
-      type: String,
-      required: false
-    },
-    website: {
-      type: String
-    },
-    whatsapp: {
-      type: String
-    },
-    additionalContactInfo: {
-      type: String
-    }
   },
   // Add userId to reference the user who created the accommodation
   userId: {
@@ -134,93 +98,80 @@ const accommodationSchema = new mongoose.Schema({
   arrivalAndDeparture: {
     arrivalFrom: {
       type: String, // Store as a string in "HH:MM" format
-      required: true,
+      required: false,
     },
     arrivalTo: {
       type: String, // Store as a string in "HH:MM" format
-      required: true,
+      required: false,
     },
     departureFrom: {
       type: String, // Store as a string in "HH:MM" format
-      required: true,
+      required: false,
     },
     departureTo: {
       type: String, // Store as a string in "HH:MM" format
-      required: true,
+      required: false,
     }
-  },    
-  checkinCheckoutProcess: {
+  },  
+  generalAmenities: [
+    {
+      type: String,
+      enum: [
+        'Wifi', 'Internet', 'TV', 'Air conditioning', 'Fan',
+        'Private entrance', 'Dryer', 'Heater', 'Washing machine', 'Detergent', 'Clothes dryer',
+        'Baby cot', 'Desk', 'Fridge', 'Dryer'
+      ]
+    }
+  ],
+  otherAmenities: [
+    {
+      type: String,
+      enum: [
+        'Wardrobe', 'Cloth hook', 'Extra cushion', 'Gas stove', 'Toilet paper',
+        'Free toiletries', 'Makeup table', 'Hot pot', 'Bathroom heaters', 'Kettle', 'Dishwasher',
+        'BBQ grill', 'Toaster', 'Towel', 'Dining table'
+      ]
+    }
+  ],
+  safeAmenities: [
+    {
+      type: String,
+      enum: [
+        'Fire siren', 'Fire extinguisher', 'Anti-theft key', 'Safe vault'
+      ]
+    }
+  ],
+  amenties: {
     type: String,
     enum: [
-      'Reception',
-      'Reception 24/7',
-      'Self-Service Accommodation Process',
-      'By Agreement with Accommodation Provider'
+      'Do not allow',
+      'Allow',
+      'Charge'
     ]
   },
-  wifi: {
-    type: String,
-    enum: ['Free of Charge', 'For a Fee', 'Not Available']
-  },
-  equipmentAndServices: [
-    {
-      type: String,
-      enum: [
-        'Free Wifi', 'High speed internet', 'Barrier-free access', 'Charging station', 'Reception', 
-        'Invoicing possible', 'Card payment possible', 'Room service', 'Air conditioning', 'ATM', 
-        'Parking', 'Kitchen', 'Exchange office', 'Restaurant', 'Bar', 'Wellness', 'Swimming pool', 
-        'Hairdressing', 'Game room', 'Fireplace', 'Grill', 'Shelter', 'Terrace', 'Conference Room', 
-        'Laundry Room', 'Cleaning plant'
-      ]
-    }
-  ],
-  children: [
-    {
-      type: String,
-      enum: [
-        'Children are welcome here', 'Family rooms', 'Children pool', 'Children Menu', 
-        'Babysitting', 'Children corner', 'Children playground', 'Sandbox', 'Slide', 'Children Toys'
-      ]
-    }
-  ],
-  diet: [
-    {
-      type: String,
-      enum: ['Own catering', 'Breakfast', 'Half board', 'Full board', 'All inclusive']
-    }
-  ],
-  typeOfStay: [
-    {
-      type: String,
-      enum: [
-        'With children', 'For Seniors', 'Romance for two', 'For the demanding', 
-        'For groups', 'Corporate action', 'With a pet', 'Without children', 'For the undemanding'
-      ]
-    }
-  ],
-  responseSpeed: {
+  pet: {
     type: String,
     enum: [
-      "I don't want state", 'Within an hour', 'Within 24 hours', 'The next day', 
-      'Within an hour on weekdays', 'On working days up to 24 hours', 
-      'We always try to respond as soon as possible'
+      'Do not allow',
+      'Allow',
+      'Charge'
     ]
   },
-  pets: {
+  partyOrganizing: {
     type: String,
-    enum: ["They are not allowed", 'Pets are allowed', 'Allowed for a fee', 'By agreement with accommodation provider']
+    enum: [
+      'Do not allow',
+      'Allow',
+      'Charge'
+    ]
   },
-  loudMusic: {
+  cooking: {
     type: String,
-    enum: ["It is not allowed", 'It is allowed']
-  },
-  smoking: {
-    type: String,
-    enum: ["It is not allowed", 'It is allowed']
-  },
-  parking: {
-    type: String,
-    enum: ["Free of charge", 'For a fee', 'We do not provide', 'Free and for a fee']
+    enum: [
+      'Do not allow',
+      'Allow',
+      'Charge'
+    ]
   },
   images: [
     {
