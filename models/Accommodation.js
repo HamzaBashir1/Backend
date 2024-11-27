@@ -64,8 +64,8 @@ const accommodationSchema = new mongoose.Schema({
   tags: { type: [String], default: [] },
   nightMin: { type: Number, required: true },
   nightMax: { type: Number, required: true },
-  Beds: { type: Number,  },
-  Kitchen: { type: Number, },
+  beds: { type: Number,  },
+  kitchen: { type: Number, },
   bedroom: { type: Number,  },  // Number of bedrooms
   bathroom: { type: Number, }, // Number of bathrooms
   person: {type: Number, required: true},
