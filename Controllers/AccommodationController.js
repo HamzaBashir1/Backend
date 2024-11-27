@@ -9,7 +9,7 @@ export const createAccommodation = async (req, res) => {
 
     const accommodation = new Accommodation(accommodationData);
     await accommodation.save();
-    res.status(201).json(accommodation);
+    res.status(200).json({ message:"Accommodation Data Store Successfully", accommodation});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -93,7 +93,7 @@ export const updateAccommodation = async (req, res) => {
     if (!updatedAccommodation) {
       return res.status(404).json({ message: "Accommodation not found" });
     }
-    res.status(200).json(updatedAccommodation);
+    res.status(200).json({message: "Accommodation update Successfully",updatedAccommodation});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
