@@ -1,5 +1,6 @@
 import Accommodation from "../models/Accommodation.js";
 import mongoose from "mongoose";
+import { createEvents } from "ics";
 
 // Create a new accommodation
 export const createAccommodation = async (req, res) => {
@@ -443,13 +444,19 @@ export const generateICS = async (req, res) => {
     }
 
     // Map occupancyCalendar to ICS events
-    const events = accommodation.occupancyCalendar.map((entry) => ({
-      start: entry.startDate.split("-").map(Number), // Convert "YYYY-MM-DD" to [YYYY, MM, DD]
-      end: entry.endDate.split("-").map(Number), // Convert "YYYY-MM-DD" to [YYYY, MM, DD]
-      title: `Booking: ${entry.guestName}`,
-      description: `Status: ${entry.status}`,
-      location: accommodation.location.address || "Accommodation Location",
-    }));
+    const events = accommodation.occupancyCalendar.map((entry) => {
+      // Convert to strings if not already
+      const startDate = typeof entry.startDate === "string" ? entry.startDate : entry.startDate.toISOString();
+      const endDate = typeof entry.endDate === "string" ? entry.endDate : entry.endDate.toISOString();
+    
+      return {
+        start: startDate.split("T")[0].split("-").map(Number), // Convert "YYYY-MM-DD" to [YYYY, MM, DD]
+        end: endDate.split("T")[0].split("-").map(Number),
+        title: `Booking: ${entry.guestName}`,
+        description: `Status: ${entry.status}`,
+        location: accommodation.location?.address || "Accommodation Location",
+      };
+    });
 
     // Generate ICS content
     createEvents(events, (error, value) => {
