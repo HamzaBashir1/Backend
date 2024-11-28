@@ -430,3 +430,44 @@ export const deleteAccommodationImages = async (req, res) => {
     });
   }
 };
+
+export const generateICS = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Fetch accommodation by ID
+    const accommodation = await Accommodation.findById(id); 
+
+    if (!accommodation) {
+      return res.status(404).json({ error: "Accommodation not found" });
+    }
+
+    // Map occupancyCalendar to ICS events
+    const events = accommodation.occupancyCalendar.map((entry) => ({
+      start: entry.startDate.split("-").map(Number), // Convert "YYYY-MM-DD" to [YYYY, MM, DD]
+      end: entry.endDate.split("-").map(Number), // Convert "YYYY-MM-DD" to [YYYY, MM, DD]
+      title: `Booking: ${entry.guestName}`,
+      description: `Status: ${entry.status}`,
+      location: accommodation.location.address || "Accommodation Location",
+    }));
+
+    // Generate ICS content
+    createEvents(events, (error, value) => {
+      if (error) {
+        console.error("Error creating .ics file:", error);
+        return res.status(500).json({ error: "Error generating calendar" });
+      }
+
+      // Set headers for file download
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${accommodation.name || "calendar"}.ics"`
+      );
+      res.setHeader("Content-Type", "text/calendar;charset=utf-8");
+      res.send(value);
+    });
+  } catch (error) {
+    console.error("Error fetching accommodation:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

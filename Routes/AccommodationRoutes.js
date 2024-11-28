@@ -15,7 +15,8 @@ import {
   addToOccupancyCalendar,
   deleteOccupancyEntry,
   searchAccommodationsByCategory,
-  deleteAccommodationImages
+  deleteAccommodationImages,
+  generateICS
 } from '../Controllers/AccommodationController.js';
 
 const router = express.Router();
@@ -23,6 +24,7 @@ const router = express.Router();
 // Search accommodations by category (this should be first)
 router.get("/accommodations/searching", searchAccommodationsByCategory);
 router.get("/accommodation/search", searchAccommodationsByCategorys);
+router.get("/accommodation/:id/calendar.ics", generateICS);
 router.post("/accommodation", createAccommodation);
 router.get("/accommodation", getAccommodations);
 router.get("/accommodation/:id", getAccommodationById);
