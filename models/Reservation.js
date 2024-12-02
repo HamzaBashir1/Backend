@@ -27,10 +27,10 @@ const reservationSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  surname: {
-    type: String,
-    required: true,
-  },
+  // surname: {
+  //   type: String,
+  //   required: true,
+  // },
   email: {
     type: String,
     required: true,
@@ -45,30 +45,30 @@ const reservationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  agreeToTerms: {
-    type: Boolean,
-    required: true,
-  },
-  diet: {
-    type: String,
-    default: "", // Default value if not provided
-  },
-  withChildren: {
-    type: Boolean,
-    default: false,
-  },
-  withPet: {
-    type: Boolean,
-    default: false,
-  },
-  useVoucher: {
-    type: Boolean,
-    default: false,
-  },
-  issueInvoice: {
-    type: Boolean,
-    default: false,
-  },
+  // agreeToTerms: {
+  //   type: Boolean,
+  //   required: true,
+  // },
+  // diet: {
+  //   type: String,
+  //   default: "", // Default value if not provided
+  // },
+  // withChildren: {
+  //   type: Boolean,
+  //   default: false,
+  // },
+  // withPet: {
+  //   type: Boolean,
+  //   default: false,
+  // },
+  // useVoucher: {
+  //   type: Boolean,
+  //   default: false,
+  // },
+  // issueInvoice: {
+  //   type: Boolean,
+  //   default: false,
+  // },
   // userId: {
   //   type: mongoose.Schema.Types.ObjectId,
   //   ref: 'User', // Reference to the User model
