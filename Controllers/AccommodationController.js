@@ -289,13 +289,15 @@ export const searchAccommodationsByCategory = async (req, res) => {
       maxPrice,
       pets,
       smoking,
+      rentalform,
       parking,
       person,
       bedroomCount, // Bedrooms filter
       bathroomCount, // Bathrooms filter
       equipmentAndServices,
       startDate, // Start date filter
-      endDate, // Services filter (array matching)
+      endDate,
+       // Services filter (array matching)
     } = req.query; // Extract query parameters
 
     let filters = {}; // Initialize an empty object to store filters
@@ -308,13 +310,14 @@ export const searchAccommodationsByCategory = async (req, res) => {
 
     // Add price range filter
     if (minPrice || maxPrice) {
-      filters.price = {}; // Initialize price filter object
-      if (minPrice) filters.price.$gte = parseFloat(minPrice); // Minimum price
-      if (maxPrice) filters.price.$lte = parseFloat(maxPrice); // Maximum price
+      filters.priceMonThus = {}; // Initialize price filter object
+      if (minPrice) filters.priceMonThus.$gte = parseFloat(minPrice); // Minimum price
+      if (maxPrice) filters.priceMonThus.$lte = parseFloat(maxPrice); // Maximum price
     }
 
     // Filter by pets, smoking, and parking policies (exact match)
     if (pets) filters.pets = pets;
+    if (rentalform) filters.rentalform = rentalform;
     if (smoking) filters.smoking = smoking;
     if (parking) filters.parking = parking;
 
