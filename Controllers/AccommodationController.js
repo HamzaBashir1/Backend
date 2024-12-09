@@ -1,5 +1,6 @@
 import Accommodation from "../models/Accommodation.js";
 import mongoose from "mongoose";
+import { createEvents } from 'ics';
 
 // Create a new accommodation
 export const createAccommodation = async (req, res) => {
