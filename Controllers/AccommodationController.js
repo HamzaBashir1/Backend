@@ -495,20 +495,30 @@ export const generateICS = async (req, res) => {
 
   try {
     // Fetch accommodation by ID
-    const accommodation = await Accommodation.findById(id); 
+    const accommodation = await Accommodation.findById(id);
 
     if (!accommodation) {
       return res.status(404).json({ error: "Accommodation not found" });
     }
 
     // Map occupancyCalendar to ICS events
-    const events = accommodation.occupancyCalendar.map((entry) => ({
-      start: entry.startDate.split("-").map(Number), // Convert "YYYY-MM-DD" to [YYYY, MM, DD]
-      end: entry.endDate.split("-").map(Number), // Convert "YYYY-MM-DD" to [YYYY, MM, DD]
-      title: `Booking: ${entry.guestName}`,
-      description: `Status: ${entry.status}`,
-      location: accommodation.location.address || "Accommodation Location",
-    }));
+    const events = accommodation.occupancyCalendar.map((entry) => {
+      const startDate = new Date(entry.startDate); // Convert to Date object
+      const endDate = new Date(entry.endDate); // Convert to Date object
+
+      // Validate the dates
+      if (isNaN(startDate) || isNaN(endDate)) {
+        throw new Error("Invalid date format in occupancyCalendar");
+      }
+
+      return {
+        start: [startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate()], // Format as [YYYY, MM, DD]
+        end: [endDate.getFullYear(), endDate.getMonth() + 1, endDate.getDate()], // Format as [YYYY, MM, DD]
+        title: `Booking: ${entry.guestName || "Guest"}`,
+        description: `Status: ${entry.status || "Unknown"}`,
+        location: accommodation.location?.address || "Accommodation Location",
+      };
+    });
 
     // Generate ICS content
     createEvents(events, (error, value) => {
