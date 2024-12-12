@@ -20,6 +20,10 @@ const HostSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  overallrating: {
+    type: String,
+    required: false
+  },
   planName: {
     type: String,
     required: false
