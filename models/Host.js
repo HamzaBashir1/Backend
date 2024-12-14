@@ -16,6 +16,18 @@ const HostSchema = new mongoose.Schema({
       enum: ["male", "female", "other"],
       default: "other",
     },
+    dateOfBirth: {
+      type: Date,
+      required: false,
+  },
+  address: {
+      type: String,
+      required: false,
+  },
+  aboutYou: {
+      type: String,
+      required: false,
+  },
   phoneNumber: {
     type: String,
     required: false

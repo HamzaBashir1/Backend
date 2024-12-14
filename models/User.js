@@ -17,6 +17,18 @@ const UserSchema = new mongoose.Schema(
       enum: ["male", "female", "other"],
       default: "other",
     },
+    dateOfBirth: {
+      type: Date,
+      required: false,
+    },
+    address: {
+        type: String,
+        required: false,
+    },
+    aboutYou: {
+        type: String,
+        required: false,
+    },
     // Address information
     streetNumber: { type: String },
     city: { type: String },
