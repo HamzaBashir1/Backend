@@ -1,32 +1,36 @@
 import mongoose from 'mongoose';
 
 const HostSchema = new mongoose.Schema({
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: false },
-    name: { type: String, required: true },
-    phone: { type: String }, // Changed from Number to String
-    photo: { type: String },
-    role: {
-      type: String,
-      enum: ["host", "admin"],
-      default: "host",
-    },
-    gender: {
-      type: String,
-      enum: ["male", "female", "other"],
-      default: "other",
-    },
-    dateOfBirth: {
-      type: Date,
-      required: false,
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: false },
+  name: { type: String, required: true },
+  phone: { type: String }, // Changed from Number to String
+  photo: { type: String },
+  role: {
+    type: String,
+    enum: ["host", "admin"],
+    default: "host",
+  },
+  gender: {
+    type: String,
+    enum: ["male", "female", "other"],
+    default: "other",
+  },
+  dateOfBirth: {
+    type: Date,
+    required: false,
+  },
+  username: {
+    type: String,
+    required: false,
   },
   address: {
-      type: String,
-      required: false,
+    type: String,
+    required: false,
   },
   aboutYou: {
-      type: String,
-      required: false,
+    type: String,
+    required: false,
   },
   phoneNumber: {
     type: String,
