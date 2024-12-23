@@ -11,7 +11,7 @@ const generateToken = (user) => {
 };
 
 export const register = async (req, res) => {
-  const { email, password, name, role, photo, genderpropertyType, propertyName, propertyAddress, propertyPrice } = req.body;
+  const { email, password, name, role, photo, gender, propertyType, propertyName, propertyAddress, propertyPrice } = req.body;
 
   try {
     let existingUser = null;
