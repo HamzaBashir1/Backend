@@ -71,13 +71,16 @@ const accommodationSchema = new mongoose.Schema({
   person: {type: Number, required: true},
   locationDetails: {
     streetAndNumber: {
-      type: String
+      type: String,
+      set: (value) => value?.toLowerCase()
     },
     roomNumber: {
-      type: String
+      type: String,
+      set: (value) => value?.toLowerCase()
     },
     city: {
-      type: String
+      type: String,
+      set: (value) => value?.toLowerCase()
     },
     zipCode: {
       type: String
@@ -86,7 +89,8 @@ const accommodationSchema = new mongoose.Schema({
       type: String
     },
     state: {
-      type: String
+      type: String,
+      set: (value) => value?.toLowerCase()
     },
   },
   // Add userId to reference the user who created the accommodation
