@@ -399,10 +399,10 @@ if (otherAmenities) {
 
 //amother/
     // Filter by bedroom count (<= specified number)
-    if (bedroomCount) filters.bedroomCount = { $lte: parseInt(bedroomCount) };
+    if (bedroomCount) filters.bedroom = { $lte: parseInt(bedroomCount) };
 
     // Filter by bathroom count (<= specified number)
-    if (bathroomCount) filters.bathroomCount = { $lte: parseInt(bathroomCount) };
+    if (bathroomCount) filters.bathroom= { $lte: parseInt(bathroomCount) };
    
    
     // Filter by occupancy dates, ensuring that the accommodation is available for the specified range
