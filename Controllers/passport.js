@@ -5,7 +5,7 @@ import User from '../models/User.js'; // Adjust the path as necessary
 passport.use(new GoogleStrategy({
   clientID: "951178339713-u813sl2r7vhnr6qh19a20c5qdkfm7k19.apps.googleusercontent.com", // Ensure this is defined in .env
   clientSecret: "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", // Ensure this is defined in .env
-  callbackURL: "https://backend-gd0n.onrender.com/api/auth/google/callback"
+  callbackURL: "https://backend-1-yfnm.onrender.com/api/auth/google/callback"
 },
 
 async (accessToken, refreshToken, profile, done) => {
