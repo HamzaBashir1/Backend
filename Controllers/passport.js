@@ -1,6 +1,6 @@
 import passport from 'passport';
 import GoogleStrategy from 'passport-google-oauth20';
-import User from '../models/User.js'; // Adjust the path as necessary
+import Host from '../models/Host';
 
 passport.use(new GoogleStrategy({
   clientID: "951178339713-u813sl2r7vhnr6qh19a20c5qdkfm7k19.apps.googleusercontent.com", // Ensure this is defined in .env
@@ -17,7 +17,7 @@ async (accessToken, refreshToken, profile, done) => {
     }
 
     // Create a new user if not exists
-    user = new User({
+    user = new Host({
       email: profile.emails[0].value,
       name: profile.displayName,
       photo: profile._json.picture,  // Save profile picture URL
