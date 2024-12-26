@@ -1,6 +1,6 @@
 import passport from 'passport';
 import GoogleStrategy from 'passport-google-oauth20';
-import Host from '../models/Host';
+import Host from '../models/Host.js';
 
 passport.use(new GoogleStrategy({
   clientID: "951178339713-u813sl2r7vhnr6qh19a20c5qdkfm7k19.apps.googleusercontent.com", // Ensure this is defined in .env
@@ -11,7 +11,7 @@ passport.use(new GoogleStrategy({
 async (accessToken, refreshToken, profile, done) => {
   try {
     // Check if user already exists
-    let user = await User.findOne({ email: profile.emails[0].value });
+    let user = await Host.findOne({ email: profile.emails[0].value });
     if (user) {
       return done(null, user);
     }
