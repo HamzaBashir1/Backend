@@ -18,7 +18,7 @@ router.get('/google', passport.authenticate('google', {
 
 router.get('/google/callback', passport.authenticate('google'), (req, res) => {
   // Successful authentication
-  res.redirect('https://www.putkoapp.online/Guest'); // Redirect to your profile page or wherever you want
+  res.redirect('https://www.putkoapp.online/Profile'); // Redirect to your profile page or wherever you want
 });
 
 // Logout route

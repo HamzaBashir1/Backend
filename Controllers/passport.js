@@ -21,7 +21,7 @@ async (accessToken, refreshToken, profile, done) => {
       email: profile.emails[0].value,
       name: profile.displayName,
       photo: profile._json.picture,  // Save profile picture URL
-      role: 'guest', // Default role for new users
+      role: 'host', // Default role for new users
       gender: 'other', // Default gender for new users
       isVerified: true // Automatically set to true for Google OAuth users
     });
