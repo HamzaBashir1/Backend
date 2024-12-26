@@ -24,26 +24,6 @@ const HostSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  propertyType: {
-    type: String,
-    enum: [
-      'Apartment', 'Flat', 'Glamping', 'Cottages', 'Motels/Hostel', 'Wooden Houses', 
-      'Guest Houses', 'Secluded Accommodation', 'Hotels', 'Dormitories', 'Caves', 
-      'Campsites', 'Treehouses', 'Houseboats', 'Rooms', 'Entire Homes', 'Luxury Accommodation'
-    ]
-  },
-  propertyName: {
-    type: String,
-    required: false,
-  },
-  propertyAddress: {
-    type: String,
-    required: false,
-  },
-  propertyPrice: {
-    type: Number,
-    required: false,
-  },
   address: {
     type: String,
     required: false,
