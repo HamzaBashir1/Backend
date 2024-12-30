@@ -63,7 +63,7 @@ export const getMessages = async (req, res) => {
 
 export async function handler(req, res) {
   if (req.method === "POST") {
-    const { email, message } = req.body;
+    const { email, message, subject } = req.body;
 
     // Create reusable transporter object using SMTP transport
     let transporter = nodemailer.createTransport({
@@ -78,7 +78,7 @@ export async function handler(req, res) {
     let mailOptions = {
       from: "sharjeelsohail279@gmail.com",
       to: email, // Recipient email
-      subject: "Reservation Confirmation",
+      subject: subject || "Reservation Confirmation",
       html: message,
     };
 
