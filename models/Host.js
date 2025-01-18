@@ -32,6 +32,10 @@ const HostSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  language: {
+    type: String,
+    required: false,
+  },
   phoneNumber: {
     type: String,
     required: false
