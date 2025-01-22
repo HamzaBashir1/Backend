@@ -117,64 +117,144 @@ const accommodationSchema = new mongoose.Schema({
       required: false,
     }
   },  
-  generalAmenities: [
+  // generalAmenities: [
+  //   {
+  //     type: String,
+  //     enum: [
+  //       'Wifi', 'Internet', 'TV', 'Air conditioning', 'Fan',
+  //       'Private entrance', 'Dryer', 'Heater', 'Washing machine', 'Detergent', 'Clothes dryer',
+  //       'Baby cot', 'Desk', 'Fridge', 'Dryer'
+  //     ]
+  //   }
+  // ],
+  // otherAmenities: [
+  //   {
+  //     type: String,
+  //     enum: [
+  //       'Wardrobe', 'Cloth hook', 'Extra cushion', 'Gas stove', 'Toilet paper',
+  //       'Free toiletries', 'Makeup table', 'Hot pot', 'Bathroom heaters', 'Kettle', 'Dishwasher',
+  //       'BBQ grill', 'Toaster', 'Towel', 'Dining table'
+  //     ]
+  //   }
+  // ],
+  // safeAmenities: [
+  //   {
+  //     type: String,
+  //     enum: [
+  //       'Fire siren', 'Fire extinguisher', 'Anti-theft key', 'Safe vault'
+  //     ]
+  //   }
+  // ],
+  services: [
     {
       type: String,
       enum: [
-        'Wifi', 'Internet', 'TV', 'Air conditioning', 'Fan',
-        'Private entrance', 'Dryer', 'Heater', 'Washing machine', 'Detergent', 'Clothes dryer',
-        'Baby cot', 'Desk', 'Fridge', 'Dryer'
+        "Wifi", "TV", "PC Desk(workspae)"
       ]
     }
   ],
-  otherAmenities: [
+  bathroomAmenities: [
     {
       type: String,
       enum: [
-        'Wardrobe', 'Cloth hook', 'Extra cushion', 'Gas stove', 'Toilet paper',
-        'Free toiletries', 'Makeup table', 'Hot pot', 'Bathroom heaters', 'Kettle', 'Dishwasher',
-        'BBQ grill', 'Toaster', 'Towel', 'Dining table'
-      ]
-    }
+        'Bathub / Shower', 'Washing Machine', 'Dryer', 'Ironing',
+      ],
+    },
   ],
-  safeAmenities: [
+  kitchenDiningAmenities: [
     {
       type: String,
       enum: [
-        'Fire siren', 'Fire extinguisher', 'Anti-theft key', 'Safe vault'
-      ]
-    }
+        'Stovetop', 'Oven', 'Dishwasher', 'Refrigerator', 'Freezer', 
+        'Dining Table', 'Coffee Maker',
+      ],
+    },
   ],
-  amenties: {
-    type: String,
-    enum: [
-      'Do not allow',
-      'Allow',
-      'Charge'
-    ]
-  },
+  heatingCoolingAmenities: [
+    {
+      type: String,
+      enum: [
+        'Indoor FirePlace', 'Air Conditioning', 'Central Heating',
+      ],
+    },
+  ],
+  safetyAmenities: [
+    {
+      type: String,
+      enum: [
+        'Fire Extinguisher', 'First Aid Kit',
+      ],
+    },
+  ],
+  wellnessAmenities: [
+    {
+      type: String,
+      enum: [
+        'Sauna', 'Hot Tub', 'Indoor pool', 'Outdoor pool',
+      ],
+    },
+  ],
+  outdoorAmenities: [
+    {
+      type: String,
+      enum: [
+        'Firepit', 'Balcony', 'Terrace', 'Outdoor dining area', 'Grill',
+      ],
+    },
+  ],
+  parkingFacilities: [
+    {
+      type: String,
+      enum: [
+        'Free Parking on-site', 'Paid Parking on-site', 'Public Parking',
+      ],
+    },
+  ],
+  checkIn: [
+    {
+      type: String,
+      enum: [
+        'Self Check-in', 'Reception', 'Host Greeting',
+      ],
+    },
+  ],
+  meals: [
+    {
+      type: String,
+      enum: [
+        'No Meals', 'Breakfast', 'Half Board', 'Full Board', 'All-Inclusive',
+      ],
+    },
+  ],
+  // amenties: {
+  //   type: String,
+  //   enum: [
+  //     'Do not allow',
+  //     'Allow',
+  //     'Charge'
+  //   ]
+  // },
   pet: {
     type: String,
     enum: [
-      'Do not allow',
-      'Allow',
-      'Charge'
+      'Allowed at no extra charge',
+      'Allowed with an additional fee',
+      'Not Allowed'
     ]
   },
   partyOrganizing: {
     type: String,
     enum: [
-      'Do not allow',
-      'Allow',
-      'Charge'
+      'Allowed',
+      'Not Allowed'
     ]
   },
-  cooking: {
+  smoking: {
     type: String,
     enum: [
-      'Do not allow',
-      'Allow',
-      'Charge'
+      'Allowed indoors',
+      'Allow in designated areas',
+      'Not allowed'
     ]
   },
   images: [
