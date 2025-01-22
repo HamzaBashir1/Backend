@@ -4,6 +4,7 @@ const HostSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: false },
   name: { type: String, required: true },
+  lastName: { type: String, required: false },
   phone: { type: String }, // Changed from Number to String
   photo: { type: String },
   role: {

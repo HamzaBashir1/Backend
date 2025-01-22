@@ -11,7 +11,7 @@ const generateToken = (user) => {
 };
 
 export const register = async (req, res) => {
-  const { email, password, name, role, photo, gender, language } = req.body;
+  const { email, password, name, lastName, role, photo, gender, language } = req.body;
 
   try {
     let existingUser = null;
@@ -36,6 +36,7 @@ export const register = async (req, res) => {
     if (role === "guest") {
       user = new User({
         name,
+        lastName,
         email,
         password: hashPassword,
         photo,
@@ -46,6 +47,7 @@ export const register = async (req, res) => {
     } else if (role === "host") {
       user = new Host({
         name,
+        lastName,
         email,
         password: hashPassword,
         photo,
@@ -72,19 +74,48 @@ export const register = async (req, res) => {
     // Verification link
     const verificationLink = `${process.env.CLIENT_SITE_URL}/verify-email/${role}/${verificationToken}`;
 
+    // Email HTML Design
+    const emailHTML = `
+    <body style="margin: 0; padding: 0; font-family: 'Arial', sans-serif; background-color: #f7f7f7; color: #333;">
+      <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);">
+
+        <!-- Content Section -->
+        <div style="padding: 24px; background-color: #fff;">
+
+          <!-- Personal Greeting -->
+          <p style="font-size: 18px; color: #333; margin: 0;">Dear User,</p>
+          <p style="font-size: 16px; color: #555; margin-top: 8px;">Thank you for signing up! Please verify your email to complete the registration process.</p>
+
+          <!-- Verification Link -->
+          <div style="margin: 24px 0; text-align: center;">
+            <a href="${verificationLink}" style="display: inline-block; padding: 12px 24px; background-color: #238869; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Verify Your Email</a>
+          </div>
+
+          <p style="font-size: 16px;">If you did not sign up for this account, please ignore this email.</p>
+          <p>Thank you for choosing Putko.</p>
+          <p style="margin-top: 30px; font-size: 16px;">
+            Best regards,<br />
+            <strong>The Putko Support Team</strong>
+          </p>
+        </div>
+      </div>
+    </body>
+    `;
+
     // Send verification email
     const mailOptions = {
       from: "sharjeelsohail279@gmail.com",
       to: email,
       subject: 'Email Verification',
       text: `Please verify your email by clicking the following link: ${verificationLink}`,
+      html: emailHTML,
     };
 
     await transporter.sendMail(mailOptions);
 
     res.status(201).json({ success: true, message: "User successfully created" });
   } catch (err) {
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(500).json({ success: false, message: `Internal server error, ${err.message}` });
   }
 };
 
