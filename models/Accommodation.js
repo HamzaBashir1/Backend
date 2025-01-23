@@ -65,6 +65,8 @@ const accommodationSchema = new mongoose.Schema({
   nightMin: { type: Number, required: true },
   nightMax: { type: Number, required: true },
   beds: { type: Number,  },
+  singlebed : { type: Number },
+  doublebed : { type: Number},
   kitchen: { type: Number, },
   bedroom: { type: Number,  },  // Number of bedrooms
   bathroom: { type: Number, }, // Number of bathrooms
@@ -149,7 +151,7 @@ const accommodationSchema = new mongoose.Schema({
     {
       type: String,
       enum: [
-        "Wifi", "TV", "PC Desk(workspae)"
+        "Wifi", "TV", "PC Desk(workspace)"
       ]
     }
   ],
