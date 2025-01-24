@@ -101,24 +101,23 @@ const accommodationSchema = new mongoose.Schema({
     ref: 'Host', // Reference to the User model
     required: true // Ensure that every accommodation has a user associated with it
   },
-  arrivalAndDeparture: {
-    arrivalFrom: {
-      type: String, // Store as a string in "HH:MM" format
-      required: false,
-    },
-    arrivalTo: {
-      type: String, // Store as a string in "HH:MM" format
-      required: false,
-    },
-    departureFrom: {
-      type: String, // Store as a string in "HH:MM" format
-      required: false,
-    },
-    departureTo: {
-      type: String, // Store as a string in "HH:MM" format
-      required: false,
-    }
-  },  
+  phoneNumber: { type: String, required: true },
+  arrivalFrom: {
+    type: String, // Store as a string in "HH:MM" format
+    required: false,
+  },
+  arrivalTo: {
+    type: String, // Store as a string in "HH:MM" format
+    required: false,
+  },
+  departureFrom: {
+    type: String, // Store as a string in "HH:MM" format
+    required: false,
+  },
+  departureTo: {
+    type: String, // Store as a string in "HH:MM" format
+    required: false,
+  },
   // generalAmenities: [
   //   {
   //     type: String,
