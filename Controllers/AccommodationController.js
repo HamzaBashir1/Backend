@@ -298,6 +298,16 @@ export const searchAccommodationsByCategory = async (req, res) => {
       bedroomCount, // Bedrooms filter
       bathroomCount, // Bathrooms filter
       equipmentAndServices,
+      services,
+      bathroomAmenities,
+      kitchenDiningAmenities,
+      heatingCoolingAmenities,
+      safetyAmenities,
+      wellnessAmenities,
+      outdoorAmenities,
+      parkingFacilities,
+      checkIn,
+      meals,
       startDate, // Start date filter
       endDate,
        // Services filter (array matching)
@@ -362,6 +372,171 @@ export const searchAccommodationsByCategory = async (req, res) => {
       filters.equipmentAndServices = { $in: servicesArray };
     }
 //ame 
+//
+if (services) {
+  let servicesArray;
+  try {
+    servicesArray = JSON.parse(services); // Attempt to parse JSON
+  } catch (error) {
+    // Fallback: If JSON parsing fails, treat it as a comma-separated string
+    servicesArray = services
+      .replace(/\[|\]/g, '') // Remove square brackets
+      .split(',') // Split by commas
+      .map((service) => service.trim()); // Trim whitespace
+  }
+
+  // Apply MongoDB `$in` operator to match any of the services
+  filters.services = { $in: servicesArray };
+}
+//
+// bathroomAmenities
+
+if (bathroomAmenities) {
+  let servicesArray;
+  try {
+    servicesArray = JSON.parse(bathroomAmenities); // Attempt to parse JSON
+  } catch (error) {
+    // Fallback: If JSON parsing fails, treat it as a comma-separated string
+    servicesArray = bathroomAmenities
+      .replace(/\[|\]/g, '') // Remove square brackets
+      .split(',') // Split by commas
+      .map((service) => service.trim()); // Trim whitespace
+  }
+
+  // Apply MongoDB `$in` operator to match any of the services
+  filters.bathroomAmenities = { $in: servicesArray };
+}
+//
+// kitchenAmenities
+if (kitchenDiningAmenities) {
+  let servicesArray;
+  try {
+    servicesArray = JSON.parse(kitchenDiningAmenities); // Attempt to parse JSON
+  } catch (error) {
+    // Fallback: If JSON parsing fails, treat it as a comma-separated string
+    servicesArray = kitchenDiningAmenities
+      .replace(/\[|\]/g, '') // Remove square brackets
+      .split(',') // Split by commas
+      .map((service) => service.trim()); // Trim whitespace
+  }
+
+  // Apply MongoDB `$in` operator to match any of the kitchen dining amenities
+  filters.kitchenDiningAmenities = { $in: servicesArray };
+}
+
+//
+if (heatingCoolingAmenities) {
+  let servicesArray;
+  try {
+    servicesArray = JSON.parse(heatingCoolingAmenities); // Attempt to parse JSON
+  } catch (error) {
+    // Fallback: If JSON parsing fails, treat it as a comma-separated string
+    servicesArray = heatingCoolingAmenities
+      .replace(/\[|\]/g, '') // Remove square brackets
+      .split(',') // Split by commas
+      .map((service) => service.trim()); // Trim whitespace
+  }
+
+  // Apply MongoDB `$in` operator to match any of the heating and cooling amenities
+  filters.heatingCoolingAmenities = { $in: servicesArray };
+}
+//
+if (safetyAmenities) {
+  let servicesArray;
+  try {
+    servicesArray = JSON.parse(safetyAmenities); // Attempt to parse JSON
+  } catch (error) {
+    // Fallback: If JSON parsing fails, treat it as a comma-separated string
+    servicesArray = safetyAmenities
+      .replace(/\[|\]/g, '') // Remove square brackets
+      .split(',') // Split by commas
+      .map((service) => service.trim()); // Trim whitespace
+  }
+
+  // Apply MongoDB `$in` operator to match any of the safety amenities
+  filters.safetyAmenities = { $in: servicesArray };
+}
+//
+
+if (wellnessAmenities) {
+  let servicesArray;
+  try {
+    servicesArray = JSON.parse(wellnessAmenities); // Attempt to parse JSON
+  } catch (error) {
+    // Fallback: If JSON parsing fails, treat it as a comma-separated string
+    servicesArray = wellnessAmenities
+      .replace(/\[|\]/g, '') // Remove square brackets
+      .split(',') // Split by commas
+      .map((service) => service.trim()); // Trim whitespace
+  }
+
+  // Apply MongoDB `$in` operator to match any of the wellness amenities
+  filters.wellnessAmenities = { $in: servicesArray };
+}
+
+if (outdoorAmenities) {
+  let servicesArray;
+  try {
+    servicesArray = JSON.parse(outdoorAmenities); // Attempt to parse JSON
+  } catch (error) {
+    // Fallback: If JSON parsing fails, treat it as a comma-separated string
+    servicesArray = outdoorAmenities
+      .replace(/\[|\]/g, '') // Remove square brackets
+      .split(',') // Split by commas
+      .map((service) => service.trim()); // Trim whitespace
+  }
+
+  // Apply MongoDB `$in` operator to match any of the outdoor amenities
+  filters.outdoorAmenities = { $in: servicesArray };
+}
+//
+
+if (parkingFacilities) {
+  let servicesArray;
+  try {
+    servicesArray = JSON.parse(parkingFacilities); // Attempt to parse JSON
+  } catch (error) {
+    // Fallback: If JSON parsing fails, treat it as a comma-separated string
+    servicesArray = parkingFacilities
+      .replace(/\[|\]/g, '') // Remove square brackets
+      .split(',') // Split by commas
+      .map((service) => service.trim()); // Trim whitespace
+  }
+
+  // Apply MongoDB `$in` operator to match any of the parking facilities
+  filters.parkingFacilities = { $in: servicesArray };
+}
+if (checkIn) {
+  let servicesArray;
+  try {
+    servicesArray = JSON.parse(checkIn); // Attempt to parse JSON
+  } catch (error) {
+    // Fallback: If JSON parsing fails, treat it as a comma-separated string
+    servicesArray = checkIn
+      .replace(/\[|\]/g, '') // Remove square brackets
+      .split(',') // Split by commas
+      .map((service) => service.trim()); // Trim whitespace
+  }
+
+  // Apply MongoDB `$in` operator to match any of the check-in options
+  filters.checkIn = { $in: servicesArray };
+}
+if (meals) {
+  let servicesArray;
+  try {
+    servicesArray = JSON.parse(meals); // Attempt to parse JSON
+  } catch (error) {
+    // Fallback: If JSON parsing fails, treat it as a comma-separated string
+    servicesArray = meals
+      .replace(/\[|\]/g, '') // Remove square brackets
+      .split(',') // Split by commas
+      .map((service) => service.trim()); // Trim whitespace
+  }
+
+  // Apply MongoDB `$in` operator to match any of the meal options
+  filters.meals = { $in: servicesArray };
+}
+
 if (generalAmenities) {
   let servicesArray;
   try {
