@@ -17,9 +17,11 @@ const accommodationSchema = new mongoose.Schema({
   propertyType: {
     type: String,
     enum: [
-      'Apartment', 'Flat', 'Glamping', 'Cottages', 'Motels/Hostel', 'Wooden Houses', 
-      'Guest Houses', 'Secluded Accommodation', 'Hotels', 'Dormitories', 'Caves', 
-      'Campsites', 'Treehouses', 'Houseboats', 'Rooms', 'Entire Homes', 'Luxury Accommodation'
+      "Nature House", "Wooden House", "Houseboats", "Farm House", "Dome House",
+      "Wooden Dome", "Apartment", "Glamping", "Cottages", "Motels/Hostel",
+      "Wooden Houses", "Guest Houses", "Secluded Accommodation", "Hotels",
+      "Dormitories", "Campsites", "Treehouses", "Rooms", "Entire Homes",
+      "Luxury Accommodation",
     ]
   },
   rentalform: {
