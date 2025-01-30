@@ -160,7 +160,7 @@ const accommodationSchema = new mongoose.Schema({
     {
       type: String,
       enum: [
-        'Bathub / Shower', 'Washing Machine', 'Dryer', 'Ironing',
+        'Bathtub', 'Shower', 'Washing Machine', 'Dryer', 'Ironing',
       ],
     },
   ],
