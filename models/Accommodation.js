@@ -193,7 +193,7 @@ const accommodationSchema = new mongoose.Schema({
     {
       type: String,
       enum: [
-        'Sauna', 'Hot Tub', 'Indoor pool', 'Outdoor pool',
+        'Sauna', 'Hot Tub', 'Indoor pool', 'Outdoor pool', 'None',
       ],
     },
   ],
@@ -201,7 +201,7 @@ const accommodationSchema = new mongoose.Schema({
     {
       type: String,
       enum: [
-        'Firepit', 'Balcony', 'Terrace', 'Outdoor dining area', 'Grill',
+        'Firepit', 'Balcony', 'Terrace', 'Outdoor dining area', 'Grill', 'None',
       ],
     },
   ],
