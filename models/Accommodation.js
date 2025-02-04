@@ -58,10 +58,7 @@ const accommodationSchema = new mongoose.Schema({
     }
   },
   acreage: {
-    type: String,
-    enum: [
-      '100', '200', '300', '400', '500'
-    ]
+    type: String
   },
   tags: { type: [String], default: [] },
   nightMin: { type: Number, required: true },
