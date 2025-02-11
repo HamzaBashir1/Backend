@@ -23,7 +23,9 @@ import BlogRoutes from "./Routes/BlogRoutes.js"
 import bodyParser from 'body-parser';
 import CalendarRoutes from './Routes/CalendarRoutes.js'
 import Writemessage from "./Routes/WritemessageRoutes.js"
-import SupportRoutes from "./Routes/SupportRoutes.js"
+import SupportRoutes from "./Routes/SupportRoutes.js";
+import ChatRoutes from "./Routes/ChatRoutes.js";
+import translationRoutes from "./Routes/translationRoutes.js"
 
 dotenv.config();
 
@@ -98,6 +100,8 @@ app.use("/api/blog", BlogRoutes);
 app.use("/api", CalendarRoutes); 
 app.use("/api/messages", Writemessage); 
 app.use("/api", SupportRoutes);
+app.use("/api", ChatRoutes);
+app.use("/api", translationRoutes);
 
 // Socket.IO connection
 io.on('connection', (socket) => {
