@@ -286,18 +286,12 @@ export const searchAccommodationsByCategory = async (req, res) => {
       country,
       propertyType,
       location,
-      minPrice, 
+      minPrice,
       maxPrice,
       pet,
       smoking,
       rentalform,
-      parking,
-      generalAmenities,
-      otherAmenities,
-      person,
-      bedroomCount, // Bedrooms filter
-      bathroomCount, // Bathrooms filter
-      equipmentAndServices,
+      parkingFacilities,
       services,
       bathroomAmenities,
       kitchenDiningAmenities,
@@ -305,309 +299,101 @@ export const searchAccommodationsByCategory = async (req, res) => {
       safetyAmenities,
       wellnessAmenities,
       outdoorAmenities,
-      parkingFacilities,
       checkIn,
       meals,
-      startDate, // Start date filter
+      person,
+      bedroomCount,
+      bathroomCount,
+      startDate,
       endDate,
-       // Services filter (array matching)
-    } = req.query; // Extract query parameters
+      partyOrganizing,
+    } = req.query;
 
-    let filters = {}; // Initialize an empty object to store filters
+    let filters = {};
 
-    // Build dynamic filters based on available query parameters
-    if (category) filters.propertyType = category;
-     // Filter by property type
-    if (city) filters['locationDetails.city'] = city; // Filter by city
-    if (country) filters['locationDetails.country'] = country; // Filter by country
-    if (location) filters['location.address'] = location; // Filter by location
+    // Property Type filter (using 'en' subfield)
+    if (propertyType) {
+      let servicesArray;
+      try {
+        servicesArray = JSON.parse(propertyType);
+      } catch (error) {
+        servicesArray = propertyType.replace(/\[|\]/g, '').split(',').map(s => s.trim());
+      }
+      filters['propertyType.en'] = { $in: servicesArray };
+    }
 
-    // Add price range filter
+    // Location filters
+    if (city) filters['locationDetails.city'] = city.toLowerCase();
+    if (country) filters['locationDetails.country'] = country;
+    if (location) filters['location.address'] = location;
+
+    // Price range
     if (minPrice || maxPrice) {
-      filters.priceMonThus = {}; // Initialize price filter object
-      if (minPrice) filters.priceMonThus.$gte = parseFloat(minPrice); // Minimum price
-      if (maxPrice) filters.priceMonThus.$lte = parseFloat(maxPrice); // Maximum price
+      filters.priceMonThus = {};
+      if (minPrice) filters.priceMonThus.$gte = parseFloat(minPrice);
+      if (maxPrice) filters.priceMonThus.$lte = parseFloat(maxPrice);
     }
 
-    // Filter by pets, smoking, and parking policies (exact match)
-    if (pet) filters.pet = pet;
-    if (rentalform) filters.rentalform = rentalform;
-    if (smoking) filters.smoking = smoking;
-    if (parking) filters.parking = parking;
+    // Single-value filters using 'en' subfield
+    if (pet) filters['pet.en'] = pet;
+    if (smoking) filters['smoking.en'] = smoking;
+    if (rentalform) filters['rentalform.en'] = rentalform;
+    if (partyOrganizing) filters['partyOrganizing.en'] = partyOrganizing;
 
-    // Filter by number of persons
-    if (person) filters.person = { $lte: parseInt(person)}; // Ensure it's a number
- 
-    
-    // if (bedroomCount) filters.bedroomCount = { $lte: parseInt(bedroomCount) };
-    if ( propertyType) {
-      let servicesArray;
-      try {
-        servicesArray = JSON.parse(propertyType); // Attempt to parse JSON
-      } catch (error) {
-        // Fallback: If JSON parsing fails, treat it as a comma-separated string
-        servicesArray =  propertyType
-          .replace(/\[|\]/g, '') // Remove square brackets
-          .split(',') // Split by commas
-          .map((service) => service.trim()); // Trim whitespace
+    // Person capacity
+    if (person) filters.person = { $gte: parseInt(person) };
+
+    // Bedroom and Bathroom counts
+    if (bedroomCount) filters.bedroom = { $gte: parseInt(bedroomCount) };
+    if (bathroomCount) filters.bathroom = { $gte: parseInt(bathroomCount) };
+
+    // Array-based amenities filters (using 'en' subfield)
+    const handleArrayFilter = (param, field) => {
+      if (param) {
+        let arr;
+        try {
+          arr = JSON.parse(param);
+        } catch (error) {
+          arr = param.replace(/\[|\]/g, '').split(',').map(s => s.trim());
+        }
+        filters[`${field}.en`] = { $in: arr };
       }
+    };
 
-      // Apply MongoDB `$in` operator to match any of the services
-      filters. propertyType = { $in: servicesArray };
-    }
-    // Parse equipmentAndServices if passed as a stringified array (e.g., "[wifi,Parking]")
-    if (equipmentAndServices) {
-      let servicesArray;
-      try {
-        servicesArray = JSON.parse(equipmentAndServices); // Attempt to parse JSON
-      } catch (error) {
-        // Fallback: If JSON parsing fails, treat it as a comma-separated string
-        servicesArray = equipmentAndServices
-          .replace(/\[|\]/g, '') // Remove square brackets
-          .split(',') // Split by commas
-          .map((service) => service.trim()); // Trim whitespace
-      }
+    handleArrayFilter(services, 'services');
+    handleArrayFilter(bathroomAmenities, 'bathroomAmenities');
+    handleArrayFilter(kitchenDiningAmenities, 'kitchenDiningAmenities');
+    handleArrayFilter(heatingCoolingAmenities, 'heatingCoolingAmenities');
+    handleArrayFilter(safetyAmenities, 'safetyAmenities');
+    handleArrayFilter(wellnessAmenities, 'wellnessAmenities');
+    handleArrayFilter(outdoorAmenities, 'outdoorAmenities');
+    handleArrayFilter(parkingFacilities, 'parkingFacilities');
+    handleArrayFilter(checkIn, 'checkIn');
+    handleArrayFilter(meals, 'meals');
 
-      // Apply MongoDB `$in` operator to match any of the services
-      filters.equipmentAndServices = { $in: servicesArray };
-    }
-//ame 
-//
-if (services) {
-  let servicesArray;
-  try {
-    servicesArray = JSON.parse(services); // Attempt to parse JSON
-  } catch (error) {
-    // Fallback: If JSON parsing fails, treat it as a comma-separated string
-    servicesArray = services
-      .replace(/\[|\]/g, '') // Remove square brackets
-      .split(',') // Split by commas
-      .map((service) => service.trim()); // Trim whitespace
-  }
-
-  // Apply MongoDB `$in` operator to match any of the services
-  filters.services = { $in: servicesArray };
-}
-//
-// bathroomAmenities
-
-if (bathroomAmenities) {
-  let servicesArray;
-  try {
-    servicesArray = JSON.parse(bathroomAmenities); // Attempt to parse JSON
-  } catch (error) {
-    // Fallback: If JSON parsing fails, treat it as a comma-separated string
-    servicesArray = bathroomAmenities
-      .replace(/\[|\]/g, '') // Remove square brackets
-      .split(',') // Split by commas
-      .map((service) => service.trim()); // Trim whitespace
-  }
-
-  // Apply MongoDB `$in` operator to match any of the services
-  filters.bathroomAmenities = { $in: servicesArray };
-}
-//
-// kitchenAmenities
-if (kitchenDiningAmenities) {
-  let servicesArray;
-  try {
-    servicesArray = JSON.parse(kitchenDiningAmenities); // Attempt to parse JSON
-  } catch (error) {
-    // Fallback: If JSON parsing fails, treat it as a comma-separated string
-    servicesArray = kitchenDiningAmenities
-      .replace(/\[|\]/g, '') // Remove square brackets
-      .split(',') // Split by commas
-      .map((service) => service.trim()); // Trim whitespace
-  }
-
-  // Apply MongoDB `$in` operator to match any of the kitchen dining amenities
-  filters.kitchenDiningAmenities = { $in: servicesArray };
-}
-
-//
-if (heatingCoolingAmenities) {
-  let servicesArray;
-  try {
-    servicesArray = JSON.parse(heatingCoolingAmenities); // Attempt to parse JSON
-  } catch (error) {
-    // Fallback: If JSON parsing fails, treat it as a comma-separated string
-    servicesArray = heatingCoolingAmenities
-      .replace(/\[|\]/g, '') // Remove square brackets
-      .split(',') // Split by commas
-      .map((service) => service.trim()); // Trim whitespace
-  }
-
-  // Apply MongoDB `$in` operator to match any of the heating and cooling amenities
-  filters.heatingCoolingAmenities = { $in: servicesArray };
-}
-//
-if (safetyAmenities) {
-  let servicesArray;
-  try {
-    servicesArray = JSON.parse(safetyAmenities); // Attempt to parse JSON
-  } catch (error) {
-    // Fallback: If JSON parsing fails, treat it as a comma-separated string
-    servicesArray = safetyAmenities
-      .replace(/\[|\]/g, '') // Remove square brackets
-      .split(',') // Split by commas
-      .map((service) => service.trim()); // Trim whitespace
-  }
-
-  // Apply MongoDB `$in` operator to match any of the safety amenities
-  filters.safetyAmenities = { $in: servicesArray };
-}
-//
-
-if (wellnessAmenities) {
-  let servicesArray;
-  try {
-    servicesArray = JSON.parse(wellnessAmenities); // Attempt to parse JSON
-  } catch (error) {
-    // Fallback: If JSON parsing fails, treat it as a comma-separated string
-    servicesArray = wellnessAmenities
-      .replace(/\[|\]/g, '') // Remove square brackets
-      .split(',') // Split by commas
-      .map((service) => service.trim()); // Trim whitespace
-  }
-
-  // Apply MongoDB `$in` operator to match any of the wellness amenities
-  filters.wellnessAmenities = { $in: servicesArray };
-}
-
-if (outdoorAmenities) {
-  let servicesArray;
-  try {
-    servicesArray = JSON.parse(outdoorAmenities); // Attempt to parse JSON
-  } catch (error) {
-    // Fallback: If JSON parsing fails, treat it as a comma-separated string
-    servicesArray = outdoorAmenities
-      .replace(/\[|\]/g, '') // Remove square brackets
-      .split(',') // Split by commas
-      .map((service) => service.trim()); // Trim whitespace
-  }
-
-  // Apply MongoDB `$in` operator to match any of the outdoor amenities
-  filters.outdoorAmenities = { $in: servicesArray };
-}
-//
-
-if (parkingFacilities) {
-  let servicesArray;
-  try {
-    servicesArray = JSON.parse(parkingFacilities); // Attempt to parse JSON
-  } catch (error) {
-    // Fallback: If JSON parsing fails, treat it as a comma-separated string
-    servicesArray = parkingFacilities
-      .replace(/\[|\]/g, '') // Remove square brackets
-      .split(',') // Split by commas
-      .map((service) => service.trim()); // Trim whitespace
-  }
-
-  // Apply MongoDB `$in` operator to match any of the parking facilities
-  filters.parkingFacilities = { $in: servicesArray };
-}
-if (checkIn) {
-  let servicesArray;
-  try {
-    servicesArray = JSON.parse(checkIn); // Attempt to parse JSON
-  } catch (error) {
-    // Fallback: If JSON parsing fails, treat it as a comma-separated string
-    servicesArray = checkIn
-      .replace(/\[|\]/g, '') // Remove square brackets
-      .split(',') // Split by commas
-      .map((service) => service.trim()); // Trim whitespace
-  }
-
-  // Apply MongoDB `$in` operator to match any of the check-in options
-  filters.checkIn = { $in: servicesArray };
-}
-if (meals) {
-  let servicesArray;
-  try {
-    servicesArray = JSON.parse(meals); // Attempt to parse JSON
-  } catch (error) {
-    // Fallback: If JSON parsing fails, treat it as a comma-separated string
-    servicesArray = meals
-      .replace(/\[|\]/g, '') // Remove square brackets
-      .split(',') // Split by commas
-      .map((service) => service.trim()); // Trim whitespace
-  }
-
-  // Apply MongoDB `$in` operator to match any of the meal options
-  filters.meals = { $in: servicesArray };
-}
-
-if (generalAmenities) {
-  let servicesArray;
-  try {
-    servicesArray = JSON.parse(generalAmenities); // Attempt to parse JSON
-  } catch (error) {
-    // Fallback: If JSON parsing fails, treat it as a comma-separated string
-    servicesArray = generalAmenities
-      .replace(/\[|\]/g, '') // Remove square brackets
-      .split(',') // Split by commas
-      .map((service) => service.trim()); // Trim whitespace
-  }
-
-  // Apply MongoDB `$in` operator to match any of the services
-  filters.generalAmenities = { $in: servicesArray };
-}
-
-//ame/
-
-//amother
-if (otherAmenities) {
-  let servicesArray;
-  try {
-    servicesArray = JSON.parse(otherAmenities); // Attempt to parse JSON
-  } catch (error) {
-    // Fallback: If JSON parsing fails, treat it as a comma-separated string
-    servicesArray = otherAmenities
-      .replace(/\[|\]/g, '') // Remove square brackets
-      .split(',') // Split by commas
-      .map((service) => service.trim()); // Trim whitespace
-  }
-
-  // Apply MongoDB `$in` operator to match any of the services
-  filters.otherAmenities = { $in: servicesArray };
-}
-
-//amother/
-    // Filter by bedroom count (<= specified number)
-    if (bedroomCount) filters.bedroom = { $lte: parseInt(bedroomCount) };
-
-    // Filter by bathroom count (<= specified number)
-    if (bathroomCount) filters.bathroom= { $lte: parseInt(bathroomCount) };
-   
-   
-    // Filter by occupancy dates, ensuring that the accommodation is available for the specified range
+    // Date range availability check
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-
       filters.occupancyCalendar = {
         $not: {
           $elemMatch: {
             $or: [
-              { startDate: { $lt: end, $gte: start } },  // Partially overlaps with the end
-              { endDate: { $gt: start, $lte: end } },    // Partially overlaps with the start
-              { startDate: { $lte: start }, endDate: { $gte: end } } // Fully contains the date range
+              { startDate: { $lt: end, $gte: start } },
+              { endDate: { $gt: start, $lte: end } },
+              { startDate: { $lte: start }, endDate: { $gte: end } }
             ],
-            status: "booked" // Ensure only booked status is checked
+            status: "booked"
           }
         }
       };
     }
 
-// Query the database with the constructed filters
+    // Execute query
     const accommodations = await Accommodation.find(filters).populate('userId', 'name email');
-
-    // Handle the case where no accommodations are found
     if (accommodations.length === 0) {
-      return res.status(200).json({ message: 'No accommodations found for the selected criteria.' });
+      return res.status(200).json({ message: 'No accommodations found.' });
     }
-
-    // Return the matching accommodations
     res.status(200).json(accommodations);
   } catch (error) {
     console.error('Error fetching accommodations:', error);
