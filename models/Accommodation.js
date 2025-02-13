@@ -15,20 +15,39 @@ const accommodationSchema = new mongoose.Schema({
     type: String
   },
   propertyType: {
-    type: String,
-    enum: [
-      "Nature House", "Wooden House", "Houseboats", "Farm House", "Dome House",
-      "Wooden Dome", "Apartment", "Glamping", "Cottages", "Motels/Hostel",
-      "Wooden Houses", "Guest Houses", "Secluded Accommodation", "Hotels",
-      "Dormitories", "Campsites", "Treehouses", "Rooms", "Entire Homes",
-      "Luxury Accommodation",
-    ]
+    en: {
+      type: String,
+      required: true,
+      enum: [
+        "Nature House", "Wooden House", "Houseboats", "Farm House", "Dome House",
+        "Wooden Dome", "Apartment", "Glamping", "Cottages", "Motels/Hostel",
+        "Wooden Houses", "Guest Houses", "Secluded Accommodation", "Hotels",
+        "Dormitories", "Campsites", "Treehouses", "Rooms", "Entire Homes",
+        "Luxury Accommodation"
+      ]
+    },
+    sk: {
+      type: String,
+      required: true,
+      enum: [
+        "Prírodný dom", "Drevený dom", "Hausbóty", "Farma", "Kupolový dom",
+        "Drevená kupola", "Byt", "Glamping", "Chaty", "Motely/Hostely",
+        "Drevené domy", "Penzióny", "Odľahlé ubytovanie", "Hotely",
+        "Ubytovne", "Kempingy", "Domy na strome", "Izby", "Celé domy",
+        "Luxusné ubytovanie"
+      ]
+    }
   },
+
   rentalform: {
-    type: String,
-    enum: [
-      'Entire place', 'Private room', 'Share room'
-    ]
+    en: {
+      type: String,
+      enum: ["Entire place", "Private room", "Share room"],
+    },
+    sk: {
+      type: String,
+      enum: ["Celé miesto", "Súkromná izba", "Zdieľaná izba"],
+    },
   },
   excludedDates: {
     type: [Date], // Array of Date objects
@@ -58,7 +77,7 @@ const accommodationSchema = new mongoose.Schema({
     }
   },
   acreage: {
-    type: String
+    type: String,
   },
   tags: { type: [String], default: [] },
   nightMin: { type: Number, required: true },
@@ -117,145 +136,199 @@ const accommodationSchema = new mongoose.Schema({
     type: String, // Store as a string in "HH:MM" format
     required: false,
   },
-  // generalAmenities: [
-  //   {
-  //     type: String,
-  //     enum: [
-  //       'Wifi', 'Internet', 'TV', 'Air conditioning', 'Fan',
-  //       'Private entrance', 'Dryer', 'Heater', 'Washing machine', 'Detergent', 'Clothes dryer',
-  //       'Baby cot', 'Desk', 'Fridge', 'Dryer'
-  //     ]
-  //   }
-  // ],
-  // otherAmenities: [
-  //   {
-  //     type: String,
-  //     enum: [
-  //       'Wardrobe', 'Cloth hook', 'Extra cushion', 'Gas stove', 'Toilet paper',
-  //       'Free toiletries', 'Makeup table', 'Hot pot', 'Bathroom heaters', 'Kettle', 'Dishwasher',
-  //       'BBQ grill', 'Toaster', 'Towel', 'Dining table'
-  //     ]
-  //   }
-  // ],
-  // safeAmenities: [
-  //   {
-  //     type: String,
-  //     enum: [
-  //       'Fire siren', 'Fire extinguisher', 'Anti-theft key', 'Safe vault'
-  //     ]
-  //   }
-  // ],
-  services: [
-    {
-      type: String,
+  services: {
+    en: {
+      type: [String],
+      enum: ["Wifi", "TV", "PC Desk(workspace)"],
+    },
+    sk: {
+      type: [String],
+      enum: ["Wifi", "TV", "PC stôl(pracovný priestor)"],
+    },
+  },
+  bathroomAmenities: {
+    en: {
+      type: [String],
+      enum: ["Bathtub", "Shower", "Washing Machine", "Dryer", "Ironing"],
+    },
+    sk: {
+      type: [String],
+      enum: ["Vaňa", "Sprcha", "Práčka", "Sušička", "Žehlenie"],
+    },
+  },
+  kitchenDiningAmenities: {
+    en: {
+      type: [String],
       enum: [
-        "Wifi", "TV", "PC Desk(workspace)"
-      ]
-    }
-  ],
-  bathroomAmenities: [
-    {
-      type: String,
-      enum: [
-        'Bathtub', 'Shower', 'Washing Machine', 'Dryer', 'Ironing',
+        "Stovetop",
+        "Oven",
+        "Dishwasher",
+        "Refrigerator",
+        "Freezer",
+        "Dining Table",
+        "Coffee Maker",
       ],
     },
-  ],
-  kitchenDiningAmenities: [
-    {
-      type: String,
+    sk: {
+      type: [String],
       enum: [
-        'Stovetop', 'Oven', 'Dishwasher', 'Refrigerator', 'Freezer', 
-        'Dining Table', 'Coffee Maker',
+        "Varná doska",
+        "Rúra",
+        "Umývačka riadu",
+        "Chladnička",
+        "Mraznička",
+        "Jedálenský stôl",
+        "Kávovar",
       ],
     },
-  ],
-  heatingCoolingAmenities: [
-    {
-      type: String,
+  },
+  heatingCoolingAmenities: {
+    en: {
+      type: [String],
+      enum: ["Indoor Fireplace", "Air Conditioning", "Central Heating"],
+    },
+    sk: {
+      type: [String],
+      enum: ["Vnútorný krb", "Klimatizácia", "Ústredné kúrenie"],
+    },
+  },
+
+  safetyAmenities: {
+    en: {
+      type: [String],
+      enum: ["Fire Extinguisher", "First Aid Kit"],
+    },
+    sk: {
+      type: [String],
+      enum: ["Hasiaci prístroj", "Lekárnička"],
+    },
+  },
+
+  wellnessAmenities: {
+    en: {
+      type: [String],
+      enum: ["Sauna", "Hot Tub", "Indoor Pool", "Outdoor Pool", "None"],
+    },
+    sk: {
+      type: [String],
+      enum: ["Sauna", "Vírivka", "Vnútorný bazén", "Vonkajší bazén", "Žiadne"],
+    },
+  },
+
+  outdoorAmenities: {
+    en: {
+      type: [String],
       enum: [
-        'Indoor FirePlace', 'Air Conditioning', 'Central Heating',
+        "Firepit",
+        "Balcony",
+        "Terrace",
+        "Outdoor dining area",
+        "Grill",
+        "None",
       ],
     },
-  ],
-  safetyAmenities: [
-    {
-      type: String,
+    sk: {
+      type: [String],
       enum: [
-        'Fire Extinguisher', 'First Aid Kit',
+        "Ohnisko",
+        "Balkón",
+        "Terasa",
+        "Vonkajší jedálenský priestor",
+        "Gril",
+        "Žiadne",
       ],
     },
-  ],
-  wellnessAmenities: [
-    {
-      type: String,
+  },
+  parkingFacilities: {
+    en: {
+      type: [String],
+      enum: ["Free Parking on-site", "Paid Parking on-site", "Public Parking"],
+    },
+    sk: {
+      type: [String],
+      enum: ["Bezplatné parkovanie na mieste", "Platené parkovanie", "Verejné parkovanie"],
+    },
+  },
+  checkIn: {
+    en: {
+      type: [String],
+      enum: ["Self Check-in", "Reception", "Host Greeting"],
+    },
+    sk: {
+      type: [String],
+      enum: ["Samoobslužný check-in", "Recepcia", "Privítanie hostiteľom"],
+    },
+  },
+  meals: {
+    en: {
+      type: [String],
       enum: [
-        'Sauna', 'Hot Tub', 'Indoor pool', 'Outdoor pool', 'None',
+        "No Meals",
+        "Breakfast",
+        "Half Board",
+        "Full Board",
+        "All-Inclusive",
       ],
     },
-  ],
-  outdoorAmenities: [
-    {
-      type: String,
+    sk: {
+      type: [String],
       enum: [
-        'Firepit', 'Balcony', 'Terrace', 'Outdoor dining area', 'Grill', 'None',
+        "Bez stravy",
+        "Raňajky",
+        "Polpenzia",
+        "Plná penzia",
+        "All-inclusive",
       ],
     },
-  ],
-  parkingFacilities: [
-    {
-      type: String,
-      enum: [
-        'Free Parking on-site', 'Paid Parking on-site', 'Public Parking',
-      ],
-    },
-  ],
-  checkIn: [
-    {
-      type: String,
-      enum: [
-        'Self Check-in', 'Reception', 'Host Greeting',
-      ],
-    },
-  ],
-  meals: [
-    {
-      type: String,
-      enum: [
-        'No Meals', 'Breakfast', 'Half Board', 'Full Board', 'All-Inclusive',
-      ],
-    },
-  ],
-  // amenties: {
-  //   type: String,
-  //   enum: [
-  //     'Do not allow',
-  //     'Allow',
-  //     'Charge'
-  //   ]
-  // },
+  },
+
   pet: {
-    type: String,
-    enum: [
-      'Allowed at no extra charge',
-      'Allowed with an additional fee',
-      'Not Allowed'
-    ]
+    en: {
+      type: String,
+      enum: [
+        "Allowed at no extra charge",
+        "Allowed with an additional fee",
+        "Not Allowed",
+      ],
+    },
+    sk: {
+      type: String,
+      enum: [
+        "Povolené bez príplatku",
+        "Povolené za príplatok",
+        "Nepovolené",
+      ],
+    },
   },
+
   partyOrganizing: {
-    type: String,
-    enum: [
-      'Allowed',
-      'Not Allowed'
-    ]
+    en: {
+      type: String,
+      enum: ["Allowed", "Not Allowed"],
+    },
+    sk: {
+      type: String,
+      enum: ["Povolené", "Nepovolené"],
+    },
   },
+
   smoking: {
-    type: String,
-    enum: [
-      'Allowed indoors',
-      'Allow in designated areas',
-      'Not allowed'
-    ]
+    en: {
+      type: String,
+      enum: [
+        "Allowed indoors",
+        "Allowed in designated areas",
+        "Not allowed",
+      ],
+    },
+    sk: {
+      type: String,
+      enum: [
+        "Povolené v interiéri",
+        "Povolené v určených priestoroch",
+        "Nepovolené",
+      ],
+    },
   },
   images: [
     {
