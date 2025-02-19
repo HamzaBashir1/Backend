@@ -33,7 +33,7 @@ const HostSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  language: {
+  languag: {
     type: String,
     required: false,
   },
