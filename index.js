@@ -25,6 +25,7 @@ import CalendarRoutes from './Routes/CalendarRoutes.js'
 import Writemessage from "./Routes/WritemessageRoutes.js"
 import SupportRoutes from "./Routes/SupportRoutes.js";
 import translationRoutes from "./Routes/translationRoutes.js"
+import './utils/cleanupJob.js';
 
 dotenv.config();
 
