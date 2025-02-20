@@ -8,6 +8,14 @@ const accommodationSchema = new mongoose.Schema({
   description: {
     type: String
   },
+  specialNote: {
+    type: String,
+    required: false
+  },
+  cancellationPolicy: {
+    type: String,
+    required: false
+  },
   url: {
     type: String
   },
