@@ -3,8 +3,8 @@ import Accommodation from '../models/Accommodation.js';
 import Host from '../models/Host.js';
 import Reservation from '../models/Reservation.js';
 
-// Schedule cleanup task to run every 5 minutes
-cron.schedule('*/1 * * * *', async () => {
+// Schedule cleanup task to run every 5 second
+cron.schedule('*/5 * * * * *', async () => {
   console.log('Running cleanup task for accommodations and reservations...');
 
   try {
