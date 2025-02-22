@@ -302,6 +302,7 @@ export const searchAccommodationsByCategory = async (req, res) => {
       checkIn,
       meals,
       person,
+      beds,
       bedroomCount,
       bathroomCount,
       startDate,
@@ -341,10 +342,13 @@ export const searchAccommodationsByCategory = async (req, res) => {
     if (partyOrganizing) filters['partyOrganizing.en'] = partyOrganizing;
 
     // Person capacity
-    if (person) filters.person = { $gte: parseInt(person) };
+    if (person) filters.person = { $lte: parseInt(person) };
+    if (beds) filters.beds = { $lte: parseInt(beds) };
 
     // Bedroom and Bathroom counts
+    
     if (bedroomCount) filters.bedroom = { $gte: parseInt(bedroomCount) };
+
     if (bathroomCount) filters.bathroom = { $gte: parseInt(bathroomCount) };
 
     // Array-based amenities filters (using 'en' subfield)
