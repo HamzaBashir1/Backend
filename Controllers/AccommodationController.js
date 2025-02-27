@@ -342,7 +342,14 @@ export const searchAccommodationsByCategory = async (req, res) => {
     if (partyOrganizing) filters['partyOrganizing.en'] = partyOrganizing;
 
     // Person capacity
-    if (person) filters.person = { $lte: parseInt(person) };
+    if (person) {
+      const personValue = parseInt(person);
+      
+      filters.$or = [
+        { person: { $lte: personValue } },
+        { person: { $gte: personValue } }
+      ];
+    }
     if (beds) filters.beds = { $lte: parseInt(beds) };
 
     // Bedroom and Bathroom counts
