@@ -261,6 +261,31 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+export const changePassword = async (req, res) => {
+  const { userId, newPassword, role } = req.body;
+
+  try {
+    // Find user based on role
+    const user = role === "guest" 
+      ? await User.findById(userId) 
+      : await Host.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Hash the new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+
+    await user.save();
+
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Error changing password" });
+  }
+};
+
 export const verifyEmail = async (req, res) => {
   const { token, role } = req.params;
 
