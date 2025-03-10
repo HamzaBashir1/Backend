@@ -1,3 +1,4 @@
+import DeletedReservation from '../models/DeletedReservation.js';
 import Reservation from '../models/Reservation.js';
 import mongoose from 'mongoose';
 
@@ -15,10 +16,63 @@ export const createReservation = async (req, res) => {
 // Get all reservations
 export const getAllReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find().populate('userId accommodationId');
+    const reservations = await Reservation.find();
     res.status(200).json(reservations);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// Get all deleted reservations
+export const getDeletedReservations = async (req, res) => {
+  try {
+    const reservations = await DeletedReservation.find();
+    res.status(200).json(reservations);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Permanently delete a reservation
+export const deleteReservationPermanently = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedRes = await DeletedReservation.findByIdAndDelete(id);
+
+    if (!deletedRes) {
+      return res.status(404).json({ message: "Reservation not found" });
+    }
+
+    res.status(200).json({ message: "Reservation permanently deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+export const restoreReservation = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the deleted reservation
+    const deletedReservation = await DeletedReservation.findById(id);
+    if (!deletedReservation) {
+      return res.status(404).json({ message: "Reservation not found" });
+    }
+
+    // Move back to Reservations collection
+    const restoredReservation = new Reservation({
+      ...deletedReservation.toObject(),
+      createdAt: deletedReservation.createdAt, // Keep original creation date
+    });
+
+    await restoredReservation.save(); // Save the restored reservation
+    await DeletedReservation.findByIdAndDelete(id); // Remove from deleted collection
+
+    res.status(200).json({ message: "Reservation restored successfully!" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 

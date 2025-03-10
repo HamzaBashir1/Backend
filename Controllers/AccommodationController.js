@@ -1,6 +1,7 @@
 import Accommodation from "../models/Accommodation.js";
 import mongoose from "mongoose";
 import { createEvents } from 'ics';
+import DeletedAccommodation from "../models/DeletedAccommodation.js";
 
 // Create a new accommodation
 export const createAccommodation = async (req, res) => {
@@ -103,13 +104,77 @@ export const updateAccommodation = async (req, res) => {
 // Delete accommodation by ID
 export const deleteAccommodation = async (req, res) => {
   try {
-    const accommodation = await Accommodation.findByIdAndDelete(req.params.id);
+    const accommodation = await Accommodation.findById(req.params.id);
+
     if (!accommodation) {
       return res.status(404).json({ message: "Accommodation not found" });
     }
-    res.status(200).json({ message: "Accommodation deleted successfully" });
+
+    // Create a new deleted accommodation record
+    const deletedAccommodation = new DeletedAccommodation({
+      ...accommodation.toObject(), // Copy all fields
+      deletedAt: new Date(),
+    });
+
+    await deletedAccommodation.save();  // Save to DeletedAccommodation collection
+    await Accommodation.findByIdAndDelete(req.params.id); // Remove from Accommodation
+
+    res.status(200).json({ message: "Accommodation moved to deleted list" });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+// Get all Deleted Accommodation
+export const getDeletedAccommodations = async (req, res) => {
+  try {
+    const deletedAccommodations = await DeletedAccommodation.find().populate('userId', 'name email')
+    
+    res.status(200).json(deletedAccommodations);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Restore Accommodation
+export const restoreAccommodation = async (req, res) => {
+  try {
+    const deletedAccommodation = await DeletedAccommodation.findById(req.params.id);
+
+    if (!deletedAccommodation) {
+      return res.status(404).json({ message: "Deleted accommodation not found" });
+    }
+
+    // Move back to Accommodation collection
+    const restoredAccommodation = new Accommodation({
+      ...deletedAccommodation.toObject(),
+      createdAt: deletedAccommodation.createdAt,  // Keep original creation date
+    });
+
+    await restoredAccommodation.save();  // Save to Accommodation collection
+    await DeletedAccommodation.findByIdAndDelete(req.params.id); // Remove from DeletedAccommodation
+
+    res.status(200).json({ message: "Accommodation restored successfully", restoredAccommodation });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Permanently delete accommodation
+export const deletePermanently = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find and delete from DeletedAccommodation
+    const deletedAcc = await DeletedAccommodation.findByIdAndDelete(id);
+
+    if (!deletedAcc) {
+      return res.status(404).json({ message: "Accommodation not found" });
+    }
+
+    res.status(200).json({ message: "Accommodation permanently deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 

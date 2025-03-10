@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 // Register Admin
 export const registerAdmin = async (req, res) => {
   try {
-    const { email, password, name, phone, photo, gender } = req.body;
+    const { email, password, name, phone, photo, gender, role } = req.body;
 
     // Check if admin already exists
     const existingAdmin = await Admin.findOne({ email });
@@ -24,16 +24,18 @@ export const registerAdmin = async (req, res) => {
       phone,
       photo,
       gender,
-      isAdmin: true
+      role: role || "superadmin",
     });
 
     // Save admin to database
     await newAdmin.save();
 
     // Generate JWT token
-    const token = jwt.sign({ adminId: newAdmin._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: '1h',
-    });
+    const token = jwt.sign(
+      { adminId: newAdmin._id, role: newAdmin.role }, // Include role in token
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "1h" }
+    );
 
     res.status(200).json({ status:"true", message: "Admin registered successfully", token, admin: newAdmin });
   } catch (error) {
@@ -58,10 +60,12 @@ export const loginAdmin = async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ adminId: admin._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: '1h',
-    });
+    // Generate JWT token with role
+    const token = jwt.sign(
+      { adminId: admin._id, role: admin.role }, // Include role
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "1h" }
+    );
 
     res.status(200).json({ token, admin });
   } catch (error) {

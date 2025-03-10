@@ -9,7 +9,10 @@ import {
   getReservationByAccommodationProvider,
   getReservationsByUserId,
   deleteReservationsByUserId,
-  updateReservation
+  updateReservation,
+  getDeletedReservations,
+  restoreReservation,
+  deleteReservationPermanently
 } from '../Controllers/ReservationController.js';
 
 const router = express.Router();
@@ -18,7 +21,9 @@ const router = express.Router();
 router.post('/', createReservation);
 // Update reservation route
 router.put("/reservations/:id", updateReservation);
-
+router.get("/deleted", getDeletedReservations); // Get deleted reservations
+router.post("/restore/:id", restoreReservation); // Restore reservation
+router.delete("/delete/:id", deleteReservationPermanently); // Permanently delete reservation
 // GET: Get all reservations
 router.get('/', getAllReservations);
 

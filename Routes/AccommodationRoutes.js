@@ -16,7 +16,10 @@ import {
   deleteOccupancyEntry,
   searchAccommodationsByCategory,
   deleteAccommodationImages,
-  generateICS
+  generateICS,
+  getDeletedAccommodations,
+  restoreAccommodation,
+  deletePermanently
 } from '../Controllers/AccommodationController.js';
 
 const router = express.Router();
@@ -26,9 +29,12 @@ router.get("/accommodations/searching", searchAccommodationsByCategory);
 router.get("/accommodation/search", searchAccommodationsByCategorys);
 router.get("/accommodation/:id/calendar.ics", generateICS);
 router.post("/accommodation", createAccommodation);
+router.get("/accommodation/deleted", getDeletedAccommodations);  // Get deleted accommodations
 router.get("/accommodation", getAccommodations);
+router.put("/accommodation/restore/:id", restoreAccommodation);  // Restore deleted accommodation
 router.get("/accommodation/:id", getAccommodationById);
 router.put("/accommodation/:id", updateAccommodation);
+router.delete("/accommodation/deleted/:id", deletePermanently);
 router.delete("/:accommodationId/occupancy/:entryId", deleteOccupancyEntry);
 router.get("/accommodation/user/:userId", getUserAccommodations);
 router.put("/accommodation/:id/occupancyCalendar", addToOccupancyCalendar);
