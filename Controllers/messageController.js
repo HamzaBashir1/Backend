@@ -65,18 +65,20 @@ export async function handler(req, res) {
   if (req.method === "POST") {
     const { email, message, subject } = req.body;
 
-    // Create reusable transporter object using SMTP transport
+     // Create reusable transporter object using SMTP transport
     let transporter = nodemailer.createTransport({
-      service: 'gmail', // or other email service like SendGrid, Mailgun, etc.
+      host: "smtp.websupport.sk", // WebSupport SMTP Server
+      port: 465, // Use 465 (SSL) or 587 (TLS)
+      secure: true, // True for SSL (465), False for TLS (587)
       auth: {
-        user: "sharjeelsohail279@gmail.com", // Your email address
-        pass: "iyip nosn bwem gwer", // Your email password or app-specific password
+        user: "info@putko.sk", // Your WebSupport email
+        pass: "Putko@786", // Use an environment variable instead of hardcoding
       },
     });
 
     // Email options
     let mailOptions = {
-      from: "sharjeelsohail279@gmail.com",
+      from: "info@putko.sk", // Must match the authenticated email
       to: email, // Recipient email
       subject: subject || "Reservation Confirmation",
       html: message,
