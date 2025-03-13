@@ -71,14 +71,14 @@ export async function handler(req, res) {
       port: 465, // Use 465 (SSL) or 587 (TLS)
       secure: true, // True for SSL (465), False for TLS (587)
       auth: {
-        user: "info@putko.sk", // Your WebSupport email
+        user: "support@putko.sk", // Your WebSupport email
         pass: "Putko@786", // Use an environment variable instead of hardcoding
       },
     });
 
     // Email options
     let mailOptions = {
-      from: "info@putko.sk", // Must match the authenticated email
+      from: "support@putko.sk", // Must match the authenticated email
       to: email, // Recipient email
       subject: subject || "Reservation Confirmation",
       html: message,
