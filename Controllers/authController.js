@@ -64,10 +64,12 @@ export const register = async (req, res) => {
 
     // Set up transporter for sending email
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: "smtp.websupport.sk", // WebSupport SMTP Server
+      port: 465, // Use 465 (SSL) or 587 (TLS)
+      secure: true, // True for SSL (465), False for TLS (587)
       auth: {
-        user: "sharjeelsohail279@gmail.com",
-        pass: "iyip nosn bwem gwer",
+        user: "support@putko.sk", // Your WebSupport email
+        pass: "Putko@786", // Use an environment variable instead of hardcoding
       },
     });
 
@@ -104,7 +106,7 @@ export const register = async (req, res) => {
 
     // Send verification email
     const mailOptions = {
-      from: "sharjeelsohail279@gmail.com",
+      from: "support@putko.sk",
       to: email,
       subject: 'Email Verification',
       text: `Please verify your email by clicking the following link: ${verificationLink}`,
@@ -192,15 +194,17 @@ export const requestPasswordReset = async (req, res) => {
     await user.save();
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: "smtp.websupport.sk", // WebSupport SMTP Server
+      port: 465, // Use 465 (SSL) or 587 (TLS)
+      secure: true, // True for SSL (465), False for TLS (587)
       auth: {
-        user: "sharjeelsohail279@gmail.com",
-        pass: "iyip nosn bwem gwer",
+        user: "support@putko.sk", // Your WebSupport email
+        pass: "Putko@786", // Use an environment variable instead of hardcoding
       },
     });
 
     const mailOptions = {
-      from: "sharjeelsohail279@gmail.com",
+      from: "support@putko.sk",
       to: email,
       subject: 'Password Reset',
       text: `Reset your password here: ${process.env.CLIENT_SITE_URL}/reset-password/${resetToken}`
@@ -216,15 +220,17 @@ export const requestPasswordReset = async (req, res) => {
 
 const sendResetSuccessEmail = async (userEmail) => {
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: "smtp.websupport.sk", // WebSupport SMTP Server
+    port: 465, // Use 465 (SSL) or 587 (TLS)
+    secure: true, // True for SSL (465), False for TLS (587)
     auth: {
-      user: 'sharjeelsohail279@gmail.com',
-      pass: 'iyip nosn bwem gwer',
+      user: "support@putko.sk", // Your WebSupport email
+      pass: "Putko@786", // Use an environment variable instead of hardcoding
     },
   });
 
   const mailOptions = {
-    from: "sharjeelsohail279@gmail.com",
+    from: "support@putko.sk",
     to: userEmail,
     subject: 'Password Reset Successful',
     text: 'Your password has been reset successfully.',
@@ -315,17 +321,19 @@ export const verifyEmail = async (req, res) => {
      user.isVerified = true;
      await user.save();
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
+     const transporter = nodemailer.createTransport({
+      host: "smtp.websupport.sk", // WebSupport SMTP Server
+      port: 465, // Use 465 (SSL) or 587 (TLS)
+      secure: true, // True for SSL (465), False for TLS (587)
       auth: {
-        user: "sharjeelsohail279@gmail.com",
-        pass: "iyip nosn bwem gwer",
+        user: "support@putko.sk", // Your WebSupport email
+        pass: "Putko@786", // Use an environment variable instead of hardcoding
       },
     });
 
     // Set up email options
     const mailOptions = {
-      from: process.env.EMAIL_USER, // Use environment variable
+      from: "support@putko.sk", // Use environment variable
       to: user.email,
       subject: 'Email Verified Successfully',
       text: 'Your email has been successfully verified.',
