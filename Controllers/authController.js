@@ -11,7 +11,24 @@ const generateToken = (user) => {
 };
 
 export const register = async (req, res) => {
-  const { email, password, name, lastName, role, photo, gender, language } = req.body;
+  const { email, password, name, lastName, role, photo, gender, language, lang } = req.body;
+
+  // Translation messages
+  const messages = {
+    en: {
+      userExists: "User already exists",
+      serverError: "Internal server error",
+      success: "User successfully created",
+    },
+    sk: {
+      userExists: "Používateľ už existuje",
+      serverError: "Interná chyba servera",
+      success: "Používateľ bol úspešne vytvorený",
+    },
+  };
+
+  // Determine language (default to English)
+  const t = messages[lang] || messages.sk;
 
   try {
     let existingUser = null;
@@ -24,7 +41,7 @@ export const register = async (req, res) => {
     }
 
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: t.userExists });
     }
 
     // Hash password
@@ -115,14 +132,35 @@ export const register = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    res.status(201).json({ success: true, message: "User successfully created" });
+    res.status(201).json({ success: true, message: t.success });
   } catch (err) {
-    res.status(500).json({ success: false, message: `Internal server error, ${err.message}` });
+    res.status(500).json({ success: false, message: `${t.serverError}, ${err.message}`, });
   }
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, lang } = req.body; // Get language from request body
+
+  // Define translations
+  const messages = {
+    en: {
+      userNotFound: "User not found",
+      verifyEmail: "Please verify your email first",
+      invalidCredentials: "Invalid credentials",
+      loginSuccess: "Successfully logged in",
+      loginFailed: "Failed to login",
+    },
+    sk: {
+      userNotFound: "Používateľ nebol nájdený",
+      verifyEmail: "Najprv si overte svoj e-mail",
+      invalidCredentials: "Neplatné poverenia",
+      loginSuccess: "Úspešné prihlásenie",
+      loginFailed: "Nepodarilo sa prihlásiť",
+    },
+  };
+
+  // Determine language (default to English)
+  const t = messages[lang] || messages.en;
 
   try {
     let user = null;
@@ -139,20 +177,19 @@ export const login = async (req, res) => {
 
     //check if user exist or not
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: t.userNotFound });
     }
 
     // Ensure the user is verified
     if (!user.isVerified) {
-      return res.status(400).json({ message: "Please verify your email first" });
+      return res.status(400).json({ message: t.verifyEmail });
     }
 
-   //compare password
-   const isPasswordMatch = await bcrypt.compare(req.body.password, user.password);
-
-   if (!isPasswordMatch) {
-     return res.status(400).json({ status: false, message: "Invalid credential" });
-   }
+    // Compare password
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res.status(400).json({ status: false, message: t.invalidCredentials });
+    }
 
     // Generate authentication token
     const token = generateToken(user);
@@ -160,9 +197,9 @@ export const login = async (req, res) => {
     // Remove password from response
     const { password, role, booking, ...rest } = user._doc;
 
-    res.status(200).json({ status: true, message: "Successfully login", token, data: { ...rest }, role });
+    res.status(200).json({ status: true, message: t.loginSuccess, token, data: { ...rest }, role });
   } catch (err) {
-    res.status(400).json({ status: false, message: "Failed to login" });
+    res.status(400).json({ status: false, message: t.loginFailed });
   }
 };
 
