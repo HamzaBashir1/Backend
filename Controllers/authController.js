@@ -195,7 +195,7 @@ export const login = async (req, res) => {
     const token = generateToken(user);
 
     // Remove password from response
-    const { password, role, booking, ...rest } = user._doc;
+    const { password: _, role, booking, ...rest } = user._doc;
 
     res.status(200).json({ status: true, message: t.loginSuccess, token, data: { ...rest }, role });
   } catch (err) {
