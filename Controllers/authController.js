@@ -37,7 +37,7 @@ export const register = async (req, res) => {
     if (role === "guest") {
       existingUser = await User.findOne({ email });
     } else if (role === "host") {
-      existingUser = await Host.findOne({ email });
+      existingUser = await Host.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
     }
 
     if (existingUser) {

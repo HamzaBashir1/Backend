@@ -291,8 +291,8 @@ export const addToOccupancyCalendar = async (req, res) => {
           occupancyCalendar: {
             startDate,
             endDate,
-            guestName: guestName || 'q/a', // Default to 'N/A' if no guestName is provided
-            status: status || 'book', // Default to 'booked' if no status is provided
+            guestName: guestName || '', // Default to 'N/A' if no guestName is provided
+            status: status || 'booked', // Default to 'booked' if no status is provided
           }
         }
       },
