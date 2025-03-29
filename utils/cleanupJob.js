@@ -6,19 +6,21 @@ import Reservation from "../models/Reservation.js";
 import DeletedAccommodation from "../models/DeletedAccommodation.js";
 import DeletedReservation from "../models/DeletedReservation.js";
 
-// Configure Nodemailer
-const transporter = nodemailer.createTransport({
-  service: "Gmail", // Change if using another provider
-  auth: {
-    user: "sharjeelsohail279@gmail.com",
-    pass: "iyip nosn bwem gwer", // Use environment variables for security
-  },
-});
+ // Create reusable transporter object using SMTP transport
+  let transporter = nodemailer.createTransport({
+    host: "smtp.websupport.sk", // WebSupport SMTP Server
+    port: 465, // Use 465 (SSL) or 587 (TLS)
+    secure: true, // True for SSL (465), False for TLS (587)
+    auth: {
+      user: "support@putko.sk", // Your WebSupport email
+      pass: "Putko@786", // Use an environment variable instead of hardcoding
+    },
+  });
 
 // Function to send email
 const sendEmail = async (email, reservation) => {
   const mailOptions = {
-    from: "sharjeelsohail279@gmail.com",
+    from: "support@putko.sk",
     to: reservation.email,
     subject: "Reservation Cancellation Notice",
     html: `

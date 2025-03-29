@@ -23,8 +23,6 @@ import BlogRoutes from "./Routes/BlogRoutes.js"
 import bodyParser from 'body-parser';
 import CalendarRoutes from './Routes/CalendarRoutes.js'
 import Writemessage from "./Routes/WritemessageRoutes.js"
-import SupportRoutes from "./Routes/SupportRoutes.js";
-import translationRoutes from "./Routes/translationRoutes.js"
 import './utils/cleanupJob.js';
 
 dotenv.config();
@@ -99,8 +97,6 @@ app.use("/api/favorite", FavoriteRoutes);
 app.use("/api/blog", BlogRoutes);
 app.use("/api", CalendarRoutes); 
 app.use("/api/messages", Writemessage); 
-app.use("/api", SupportRoutes);
-app.use("/api", translationRoutes);
 
 // Socket.IO connection
 io.on('connection', (socket) => {
