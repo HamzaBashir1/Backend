@@ -39,7 +39,7 @@ const DeletedAccommodationSchema = new mongoose.Schema({
       required: true,
       enum: [
         "Prírodný dom", "Drevený dom", "Hausbóty", "Farma", "Kupolový dom",
-        "Drevená kupola", "Byt", "Glamping", "Chaty", "Motely/Hostely",
+        "Drevená kupola", "Apartmán", "Glamping", "Chaty", "Motely/Hostely",
         "Drevené domy", "Penzióny", "Odľahlé ubytovanie", "Hotely",
         "Ubytovne", "Kempingy", "Domy na strome", "Izby", "Celé domy",
         "Luxusné ubytovanie"
