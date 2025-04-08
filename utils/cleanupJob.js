@@ -22,26 +22,21 @@ const sendEmail = async (email, reservation) => {
   const mailOptions = {
     from: "support@putko.sk",
     to: reservation.email,
-    subject: "Reservation Cancellation Notice",
-    html: `
-      <p>Dear <strong>${reservation.name}</strong>,</p>
-  
-      <p>We regret to inform you that your reservation has been canceled due to the accommodation no longer being available.</p>
-  
-      <h3>Reservation Details:</h3>
-      <ul>
-        <li><strong>Check-in Date:</strong> ${new Date(reservation.checkInDate).toDateString()}</li>
-        <li><strong>Check-out Date:</strong> ${new Date(reservation.checkOutDate).toDateString()}</li>
-        <li><strong>Total Price:</strong> €${reservation.totalPrice}</li>
-        <li><strong>Number of Guests:</strong> ${reservation.numberOfPersons}</li>
-        <li><strong>Contact Number:</strong> +${reservation.phone}</li>
-      </ul>
-  
-      <p>We apologize for any inconvenience this may have caused. If you have any questions, feel free to reach out to us.</p>
-  
-      <p>Best Regards,</p>
-      <p><strong>Putko Team</strong></p>
-    `,
+    subject: "Zrušenie rezervácie",
+      html: `
+        <p>Vážený/á <strong>${reservation.name}</strong>,</p>
+        <p>Ľutujeme, ale vaša rezervácia bola zrušená, pretože ubytovanie už nie je dostupné.</p>
+        <h3>Detaily rezervácie:</h3>
+        <ul>
+          <li><strong>Príchod:</strong> ${new Date(reservation.checkInDate).toDateString()}</li>
+          <li><strong>Odchod:</strong> ${new Date(reservation.checkOutDate).toDateString()}</li>
+          <li><strong>Cena:</strong> €${reservation.totalPrice}</li>
+          <li><strong>Počet osôb:</strong> ${reservation.numberOfPersons}</li>
+          <li><strong>Telefón:</strong> +${reservation.phone}</li>
+        </ul>
+        <p>Ospravedlňujeme sa za nepríjemnosti. Ak máte otázky, neváhajte nás kontaktovať.</p>
+        <p>S pozdravom,<br><strong>Tím Putko</strong></p>
+      `,
   };
 
   try {
