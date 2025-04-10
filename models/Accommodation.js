@@ -65,10 +65,18 @@ const accommodationSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  priceFriSun: {
-    type: Number,
-    required: true
-  },
+  // priceFriSun: {
+  //   type: Number,
+  //   required: true
+  // },
+  flexiblePrice: [
+    {
+      name: { type: String },
+      start: { type: String },
+      end: { type: String },
+      price: { type: Number },
+    }
+  ],
   discount: {
     type: Number
   },
