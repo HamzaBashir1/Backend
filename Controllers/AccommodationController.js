@@ -283,6 +283,10 @@ export const addToOccupancyCalendar = async (req, res) => {
   const { startDate, endDate, guestName, status } = req.body; // Expecting occupancyCalendar entry data in request body
 
   try {
+    // ❗ Don't proceed if cancelled or status is empty
+    if (!status || status === 'cancelled') {
+      return res.status(400).json({ message: "Cancelled or empty status. Not adding to calendar." });
+    }
     // Use $push to add a new entry to the occupancyCalendar array without overwriting existing entries
     const updatedAccommodation = await Accommodation.findByIdAndUpdate(
       id, // Match the accommodation by its ID
@@ -291,8 +295,8 @@ export const addToOccupancyCalendar = async (req, res) => {
           occupancyCalendar: {
             startDate,
             endDate,
-            guestName: guestName || '', // Default to 'N/A' if no guestName is provided
-            status: status || 'booked', // Default to 'booked' if no status is provided
+            guestName: guestName || '',
+            status: status || 'booked',
           }
         }
       },
@@ -325,9 +329,10 @@ export const deleteOccupancyEntry = async (req, res) => {
     }
 
     // Remove the specific occupancyCalendar entry by entryId
-    accommodation.occupancyCalendar = accommodation.occupancyCalendar.filter(
-      (entry) => entry._id.toString() !== entryId // Filter out the entry with the matching ID
-    );
+    accommodation.occupancyCalendar = accommodation.occupancyCalendar
+  .filter((entry) => entry._id.toString() !== entryId)
+  .filter((entry) => ['booked', 'blocked', 'available'].includes(entry.status));
+ 
 
     // Save the updated accommodation document
     await accommodation.save();
