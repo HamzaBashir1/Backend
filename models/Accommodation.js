@@ -79,9 +79,9 @@ const accommodationSchema = new mongoose.Schema({
       Minnumberofnights: { type: Number },
     }
   ],
-  discount: {
-    type: Number
-  },
+  // discount: {
+  //   type: Number
+  // },
   location: {
     address: {
       type: String,
