@@ -106,6 +106,7 @@ const accommodationSchema = new mongoose.Schema({
   doublebed : { type: Number},
   kitchen: { type: Number, },
   WCs: { type: Number, },
+  SocialRoom: { type: Number, },
   bedroom: { type: Number,  },  // Number of bedrooms
   bathroom: { type: Number, }, // Number of bathrooms
   person: {type: Number, required: true},
