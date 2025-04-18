@@ -61,11 +61,11 @@ const DeletedAccommodationSchema = new mongoose.Schema({
     type: [Date], // Array of Date objects
     default: [],
   },
-  priceMonThus: {
-    type: Number,
-    required: true
-  },
- // priceFriSun: {
+  // priceMonThus: {
+  //   type: Number,
+  //   required: true
+  // },
+  // priceFriSun: {
   //   type: Number,
   //   required: true
   // },
@@ -75,10 +75,13 @@ const DeletedAccommodationSchema = new mongoose.Schema({
       start: { type: String },
       end: { type: String },
       price: { type: Number },
+      Minnumberofpersons: { type: Number },
+      Minnumberofnights: { type: Number },
     }
   ],
   discount: {
-    type: Number
+    type: Number,
+    required: false
   },
   location: {
     address: {
@@ -102,6 +105,7 @@ const DeletedAccommodationSchema = new mongoose.Schema({
   singlebed : { type: Number },
   doublebed : { type: Number},
   kitchen: { type: Number, },
+  WCs: { type: Number, },
   bedroom: { type: Number,  },  // Number of bedrooms
   bathroom: { type: Number, }, // Number of bathrooms
   person: {type: Number, required: true},

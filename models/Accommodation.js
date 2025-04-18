@@ -61,10 +61,10 @@ const accommodationSchema = new mongoose.Schema({
     type: [Date], // Array of Date objects
     default: [],
   },
-  priceMonThus: {
-    type: Number,
-    required: true
-  },
+  // priceMonThus: {
+  //   type: Number,
+  //   required: true
+  // },
   // priceFriSun: {
   //   type: Number,
   //   required: true
