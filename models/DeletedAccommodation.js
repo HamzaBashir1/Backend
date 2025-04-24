@@ -61,14 +61,24 @@ const DeletedAccommodationSchema = new mongoose.Schema({
     type: [Date], // Array of Date objects
     default: [],
   },
-  // priceMonThus: {
+  // FixedPrice: {
   //   type: Number,
-  //   required: true
+  //   required: false
   // },
-  // priceFriSun: {
-  //   type: Number,
-  //   required: true
-  // },
+  specialPrice: {
+    start: {
+      type: Date,
+      required: false
+    },
+    end: {
+      type: Date,
+      required: false
+    },
+    price: {
+      type: Number,
+      required: false
+    }
+  },
   flexiblePrice: [
     {
       name: { type: String },
@@ -82,79 +92,85 @@ const DeletedAccommodationSchema = new mongoose.Schema({
   ],
   NewYearsEve: [
     {
-      name: { type: String, required: true },
-      start: { type: String, required: true },
-      end: { type: String, required: true },
-      price: { type: Number, required: true },
-      Minnumberofpersons: { type: Number, required: true },
-      Minnumberofnights: { type: Number, required: true },
-      accommodationnote: { type: String, required: true }
-    }
+      name: { type: String, required: false },
+      start: { type: String, required: false },
+      end: { type: String, required: false },
+      price: { type: Number, required: false },
+      Minnumberofpersons: { type: Number, required: false },
+      Minnumberofnights: { type: Number, required: false },
+      accommodationnote: { type: String, required: false },
+    },
   ],
+
   ChristmasStay: [
     {
-      name: { type: String, required: true },
-      start: { type: String, required: true },
-      end: { type: String, required: true },
-      price: { type: Number, required: true },
-      Minnumberofpersons: { type: Number, required: true },
-      Minnumberofnights: { type: Number, required: true },
-      accommodationnote: { type: String, required: true }
+      name: { type: String, required: false },
+      start: { type: String, required: false },
+      end: { type: String, required: false },
+      price: { type: Number, required: false },
+      Minnumberofpersons: { type: Number, required: false },
+      Minnumberofnights: { type: Number, required: false },
+      accommodationnote: { type: String, required: false },
     }
   ],
+
   EasterStay: [
     {
-      name: { type: String, required: true },
-      start: { type: String, required: true },
-      end: { type: String, required: true },
-      price: { type: Number, required: true },
-      Minnumberofpersons: { type: Number, required: true },
-      Minnumberofnights: { type: Number, required: true },
-      accommodationnote: { type: String, required: true }
+      name: { type: String, required: false },
+      start: { type: String, required: false },
+      end: { type: String, required: false },
+      price: { type: Number, required: false },
+      Minnumberofpersons: { type: Number, required: false },
+      Minnumberofnights: { type: Number, required: false },
+      accommodationnote: { type: String, required: false }
     }
   ],
+
   Offseason: [
     {
-      name: { type: String, required: true },
-      start: { type: String, required: true },
-      end: { type: String, required: true },
-      price: { type: Number, required: true },
-      Minnumberofpersons: { type: Number, required: true },
-      Minnumberofnights: { type: Number, required: true },
-      accommodationnote: { type: String, required: true }
+      name: { type: String, required: false },
+      start: { type: String, required: false },
+      end: { type: String, required: false },
+      price: { type: Number, required: false },
+      Minnumberofpersons: { type: Number, required: false },
+      Minnumberofnights: { type: Number, required: false },
+      accommodationnote: { type: String, required: false },
     }
   ],
+
   Summeroffseason: [
     {
-      name: { type: String, required: true },
-      start: { type: String, required: true },
-      end: { type: String, required: true },
-      price: { type: Number, required: true },
-      Minnumberofpersons: { type: Number, required: true },
-      Minnumberofnights: { type: Number, required: true },
-      accommodationnote: { type: String, required: true }
+      name: { type: String, required: false },
+      start: { type: String, required: false },
+      end: { type: String, required: false },
+      price: { type: Number, required: false },
+      Minnumberofpersons: { type: Number, required: false },
+      Minnumberofnights: { type: Number, required: false },
+      accommodationnote: { type: String, required: false },
     }
   ],
+
   SummerSeason: [
     {
-      name: { type: String, required: true },
-      start: { type: String, required: true },
-      end: { type: String, required: true },
-      price: { type: Number, required: true },
-      Minnumberofpersons: { type: Number, required: true },
-      Minnumberofnights: { type: Number, required: true },
-      accommodationnote: { type: String, required: true }
+      name: { type: String, required: false },
+      start: { type: String, required: false },
+      end: { type: String, required: false },
+      price: { type: Number, required: false },
+      Minnumberofpersons: { type: Number, required: false },
+      Minnumberofnights: { type: Number, required: false },
+      accommodationnote: { type: String, required: false },
     }
   ],
+
   WinterSeason: [
     {
-      name: { type: String, required: true },
-      start: { type: String, required: true },
-      end: { type: String, required: true },
-      price: { type: Number, required: true },
-      Minnumberofpersons: { type: Number, required: true },
-      Minnumberofnights: { type: Number, required: true },
-      accommodationnote: { type: String, required: true }
+      name: { type: String, required: false },
+      start: { type: String, required: false },
+      end: { type: String, required: false },
+      price: { type: Number, required: false },
+      Minnumberofpersons: { type: Number, required: false },
+      Minnumberofnights: { type: Number, required: false },
+      accommodationnote: { type: String, required: false },
     }
   ],
   discount: {
@@ -183,9 +199,9 @@ const DeletedAccommodationSchema = new mongoose.Schema({
   singlebed : { type: Number },
   doublebed : { type: Number},
   kitchen: { type: Number, },
-  LivingRoom: { type: Number, },
   WCs: { type: Number, },
   SocialRoom: { type: Number, },
+  LivingRoom: { type: Number, },
   bedroom: { type: Number,  },  // Number of bedrooms
   bathroom: { type: Number, }, // Number of bathrooms
   person: {type: Number, required: true},
