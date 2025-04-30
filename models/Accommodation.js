@@ -5,6 +5,7 @@ const accommodationSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  slug: { type: String, required: true, unique: true },
   description: {
     type: String
   },

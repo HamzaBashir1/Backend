@@ -6,12 +6,37 @@ import DeletedAccommodation from "../models/DeletedAccommodation.js";
 // Create a new accommodation
 export const createAccommodation = async (req, res) => {
   try {
-    // Since authentication is removed, we don't get userId from req.user
     const accommodationData = req.body;
 
+    // Generate a URL-friendly slug from the name (which is the title)
+    function generateSlug(name) {
+      return name
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '')   // Remove special characters
+        .replace(/\s+/g, '-')       // Replace spaces with hyphens
+        .replace(/--+/g, '-');      // Remove duplicate hyphens
+    }
+
+    let slug = generateSlug(accommodationData.name);  // Use `name` for slug generation
+
+    // Ensure the `slug` is unique
+    let existing = await Accommodation.findOne({ slug });
+    let counter = 1;
+    while (existing) {
+      slug = `${generateSlug(accommodationData.name)}-${counter}`;
+      existing = await Accommodation.findOne({ slug });
+      counter++;
+    }
+
+    // Add the generated `slug` to the accommodation data
+    accommodationData.slug = slug;
+
+    // Save the accommodation
     const accommodation = new Accommodation(accommodationData);
     await accommodation.save();
-    res.status(200).json({ message:"Accommodation Data Store Successfully", accommodation});
+
+    res.status(200).json({ message: "Accommodation Data Store Successfully", accommodation });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -86,16 +111,48 @@ export const updateAccommodationByAccommodationId = async (req, res) => {
 // Update an accommodation by ID
 export const updateAccommodation = async (req, res) => {
   try {
+    const { name } = req.body; // Destructure the name from the request body
+    let updatedAccommodationData = { ...req.body };
+
+    // Check if the name was updated (only regenerate the slug if it changed)
+    if (name) {
+      // Generate a new slug based on the new name
+      function generateSlug(name) {
+        return name
+          .toLowerCase()
+          .trim()
+          .replace(/[^\w\s-]/g, '')   // Remove special characters
+          .replace(/\s+/g, '-')       // Replace spaces with hyphens
+          .replace(/--+/g, '-');      // Remove duplicate hyphens
+      }
+
+      const newSlug = generateSlug(name);
+
+      // Ensure the slug is unique (check for existing slugs in the database)
+      let existingAccommodation = await Accommodation.findOne({ slug: newSlug });
+      let counter = 1;
+      while (existingAccommodation) {
+        // Append a counter to the slug if it already exists
+        updatedAccommodationData.slug = `${newSlug}-${counter}`;
+        existingAccommodation = await Accommodation.findOne({ slug: updatedAccommodationData.slug });
+        counter++;
+      }
+
+      // Update the accommodation data with the new slug
+      updatedAccommodationData.slug = newSlug;
+    }
+
+    // Find and update the accommodation by its ID
     const updatedAccommodation = await Accommodation.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updatedAccommodationData,
       { new: true }
     ).populate('userId', 'name email'); // Populate user info in response
 
     if (!updatedAccommodation) {
       return res.status(404).json({ message: "Accommodation not found" });
     }
-    res.status(200).json({message: "Accommodation update Successfully",updatedAccommodation});
+    res.status(200).json({ message: "Accommodation update Successfully", updatedAccommodation });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -580,5 +637,26 @@ export const generateICS = async (req, res) => {
   } catch (error) {
     console.error("Error fetching accommodation:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+// Fetch accommodation by slug
+export const getAccommodationBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    // Optional: Normalize the slug (convert to lowercase and replace spaces with dashes)
+    const sanitizedSlug = slug.replace(/\s+/g, '-').toLowerCase();
+
+    // Correct query to match the 'slug' field, not '_id'
+    const accommodation = await Accommodation.findOne({ slug: sanitizedSlug }).populate('userId', 'name email');
+
+    if (!accommodation) {
+      return res.status(404).json({ message: 'Accommodation not found' });
+    }
+
+    res.status(200).json(accommodation);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };

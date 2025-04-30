@@ -19,7 +19,8 @@ import {
   generateICS,
   getDeletedAccommodations,
   restoreAccommodation,
-  deletePermanently
+  deletePermanently,
+  getAccommodationBySlug
 } from '../Controllers/AccommodationController.js';
 
 const router = express.Router();
@@ -34,6 +35,7 @@ router.get("/accommodation", getAccommodations);
 router.put("/accommodation/restore/:id", restoreAccommodation);  // Restore deleted accommodation
 router.get("/accommodation/:id", getAccommodationById);
 router.put("/accommodation/:id", updateAccommodation);
+router.get("/accommodation/slug/:slug", getAccommodationBySlug);
 router.delete("/accommodation/deleted/:id", deletePermanently);
 router.delete("/:accommodationId/occupancy/:entryId", deleteOccupancyEntry);
 router.get("/accommodation/user/:userId", getUserAccommodations);
