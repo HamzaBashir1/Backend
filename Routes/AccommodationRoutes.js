@@ -20,7 +20,8 @@ import {
   getDeletedAccommodations,
   restoreAccommodation,
   deletePermanently,
-  getAccommodationBySlug
+  getAccommodationBySlug,
+  approveListing
 } from '../Controllers/AccommodationController.js';
 
 const router = express.Router();
