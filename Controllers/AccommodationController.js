@@ -718,7 +718,7 @@ export const approveListing = async (req, res) => {
     // Find the accommodation by slug and approve it by setting isVerified to true
     const accommodation = await Accommodation.findOneAndUpdate(
       { slug: slug },
-      { isVerified: true },
+      { isApproved: true },
       { new: true }
     );
 
