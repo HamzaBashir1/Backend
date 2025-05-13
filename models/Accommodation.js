@@ -479,6 +479,10 @@ const accommodationSchema = new mongoose.Schema({
       }
     }
   ],
+  isApproved: {
+    type: Boolean,
+    default: false,
+  }, 
   views: { type: Number, default: 0 },
   clicks: { type: Number, default: 0 },
   customerInterest: { type: Number, default: 0 },

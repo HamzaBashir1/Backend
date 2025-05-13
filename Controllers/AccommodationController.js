@@ -2,6 +2,9 @@ import Accommodation from "../models/Accommodation.js";
 import mongoose from "mongoose";
 import { createEvents } from 'ics';
 import DeletedAccommodation from "../models/DeletedAccommodation.js";
+import nodemailer from "nodemailer";
+import Host from "../models/Host.js";
+import { eachDayOfInterval, format } from 'date-fns';
 
 // Create a new accommodation
 export const createAccommodation = async (req, res) => {
@@ -36,11 +39,12 @@ export const createAccommodation = async (req, res) => {
     const accommodation = new Accommodation(accommodationData);
     await accommodation.save();
 
-    res.status(200).json({ message: "Accommodation Data Store Successfully", accommodation });
+    res.status(200).json({ message: "Accommodation Data Stored Successfully", accommodation });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Get all accommodations for a specific user
 export const getUserAccommodations = async (req, res) => {
@@ -152,7 +156,8 @@ export const updateAccommodation = async (req, res) => {
     if (!updatedAccommodation) {
       return res.status(404).json({ message: "Accommodation not found" });
     }
-    res.status(200).json({ message: "Accommodation update Successfully", updatedAccommodation });
+
+    res.status(200).json({ message: "Accommodation updated successfully", updatedAccommodation });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -336,38 +341,79 @@ export const customerInterest = async (req, res) => {
 };
 
 export const addToOccupancyCalendar = async (req, res) => {
-  const { id } = req.params; // Get accommodationId from the request parameters
-  const { startDate, endDate, guestName, status } = req.body; // Expecting occupancyCalendar entry data in request body
+  const { id } = req.params;
+  const { startDate, endDate, guestName, status } = req.body;
 
   try {
-    // ❗ Don't proceed if cancelled or status is empty
     if (!status || status === 'cancelled') {
       return res.status(400).json({ message: "Cancelled or empty status. Not adding to calendar." });
     }
-    // Use $push to add a new entry to the occupancyCalendar array without overwriting existing entries
-    const updatedAccommodation = await Accommodation.findByIdAndUpdate(
-      id, // Match the accommodation by its ID
-      {
-        $push: {
-          occupancyCalendar: {
-            startDate,
-            endDate,
-            guestName: guestName || '',
-            status: status || 'booked',
-          }
-        }
-      },
-      { new: true, useFindAndModify: false } // Return the updated document
-    );
 
-    // If the accommodation isn't found
-    if (!updatedAccommodation) {
+    const accommodation = await Accommodation.findById(id);
+    if (!accommodation) {
       return res.status(404).json({ message: "Accommodation not found" });
     }
 
+    const newStart = new Date(startDate);
+    const newEnd = new Date(endDate);
+
+    const requestedDates = eachDayOfInterval({ start: newStart, end: newEnd }).map(date =>
+      format(date, 'yyyy-MM-dd')
+    );
+
+    // Get all booked dates
+    const existingBookedDates = new Set();
+    accommodation.occupancyCalendar.forEach(entry => {
+      const existingStart = new Date(entry.startDate);
+      const existingEnd = new Date(entry.endDate);
+      const range = eachDayOfInterval({ start: existingStart, end: existingEnd }).map(date =>
+        format(date, 'yyyy-MM-dd')
+      );
+      range.forEach(d => existingBookedDates.add(d));
+    });
+
+    // Filter out conflicting dates
+    const nonConflictingDates = requestedDates.filter(date => !existingBookedDates.has(date));
+
+    if (nonConflictingDates.length === 0) {
+      return res.status(409).json({ message: "All requested dates conflict with existing bookings. Nothing stored." });
+    }
+
+    // Group contiguous non-conflicting dates into ranges
+    const groupedRanges = [];
+    let tempRange = [];
+
+    for (let i = 0; i < nonConflictingDates.length; i++) {
+      const current = new Date(nonConflictingDates[i]);
+      const next = i + 1 < nonConflictingDates.length ? new Date(nonConflictingDates[i + 1]) : null;
+
+      tempRange.push(current);
+
+      if (!next || (next - current) !== 86400000) {
+        groupedRanges.push([...tempRange]);
+        tempRange = [];
+      }
+    }
+
+    // Add the non-conflicting ranges
+    groupedRanges.forEach(range => {
+      accommodation.occupancyCalendar.push({
+        startDate: range[0],
+        endDate: range[range.length - 1],
+        guestName: guestName || '',
+        status: status || 'booked',
+      });
+    });
+
+    await accommodation.save();
+
     res.status(200).json({
-      message: "Occupancy Calendar updated successfully",
-      accommodation: updatedAccommodation,
+      message: `Added ${groupedRanges.length} non-conflicting date range(s) to the calendar.`,
+      addedRanges: groupedRanges.map(r => ({
+        startDate: format(r[0], 'yyyy-MM-dd'),
+        endDate: format(r[r.length - 1], 'yyyy-MM-dd'),
+      })),
+      accommodation,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -658,5 +704,67 @@ export const getAccommodationBySlug = async (req, res) => {
     res.status(200).json(accommodation);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+export const approveListing = async (req, res) => {
+  const { slug } = req.query;
+
+  if (!slug) {
+    return res.status(400).json({ message: "Slug is required." });
+  }
+
+  try {
+    // Find the accommodation by slug and approve it by setting isVerified to true
+    const accommodation = await Accommodation.findOneAndUpdate(
+      { slug: slug },
+      { isVerified: true },
+      { new: true }
+    );
+
+    if (!accommodation) {
+      return res.status(404).json({ message: "Accommodation not found." });
+    }
+    
+    // Fetch host information using UserID from the User model
+    const host = await Host.findById(accommodation.userId);
+
+    if (!host) {
+      return res.status(404).json({ message: "Host not found." });
+    }
+
+    // Set up nodemailer transporter
+    const transporter = nodemailer.createTransport({
+      host: "smtp.websupport.sk",
+      port: 465,
+      secure: true,
+      auth: {
+        user: "support@putko.sk",
+        pass: "Putko@786",  // You should replace this with an environment variable for security
+      },
+    });
+
+    const mailOptions = {
+      from: "support@putko.sk",
+      to: "support@putko.sk",  // Change this if you want to send it to the host's email
+      subject: `✅ Host schválil svoju ponuku`,
+      html: `
+      <p><strong>Hostiteľ ${host.name || "Neznámy"}</strong> schválil svoju ponuku na platforme Putko.</p>
+      <ul>
+        <li><strong>Email:</strong> ${host.email || "Email nie je dostupný"}</li>
+        <li><strong>Ponuka:</strong> <a href="${process.env.CLIENT_SITE_URL}/listing-stay-detail/${accommodation.slug}">Zobraziť ponuku</a></li>
+      </ul>
+    `,
+    };
+
+    // Send the email to support
+    await transporter.sendMail(mailOptions);
+
+    // Redirect to frontend listing detail page after approval
+    return res.redirect(`${process.env.CLIENT_SITE_URL}/listing-stay-detail/${slug}`);
+
+  } catch (err) {
+    console.error("❌ Error approving listing:", err.message);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };

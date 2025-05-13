@@ -25,6 +25,9 @@ import {
 
 const router = express.Router();
 
+// Static routes should be placed before dynamic ones
+router.get("/accommodation/approve-listing", approveListing); // ✅ This must be before :id
+
 // Search accommodations by category (this should be first)
 router.get("/accommodations/searching", searchAccommodationsByCategory);
 router.get("/accommodation/search", searchAccommodationsByCategorys);
