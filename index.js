@@ -79,7 +79,7 @@ const connectDB = async () => {
   }
 };
 
-cron.schedule("*/2 * * * *", () => {
+cron.schedule("0 */3 * * *", () => {
   console.log(`[${new Date().toISOString()}] Running booking sync...`);
   syncBookings();
 });
