@@ -24,6 +24,7 @@ import bodyParser from 'body-parser';
 import CalendarRoutes from './Routes/CalendarRoutes.js'
 import Writemessage from "./Routes/WritemessageRoutes.js"
 import './utils/cleanupJob.js';
+import cron from "node-cron";
 import { syncBookings } from "./Controllers/AccommodationController.js";
 
 dotenv.config();
