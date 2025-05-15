@@ -24,6 +24,7 @@ import bodyParser from 'body-parser';
 import CalendarRoutes from './Routes/CalendarRoutes.js'
 import Writemessage from "./Routes/WritemessageRoutes.js"
 import './utils/cleanupJob.js';
+import { syncBookings } from "./Controllers/AccommodationController.js";
 
 dotenv.config();
 
@@ -76,6 +77,11 @@ const connectDB = async () => {
     console.log("MongoDB connection failed", err.message);
   }
 };
+
+cron.schedule("*/2 * * * *", () => {
+  console.log(`[${new Date().toISOString()}] Running booking sync...`);
+  syncBookings();
+});
 
 // Test route to check if the API is working
 app.get('/', (req, res) => {

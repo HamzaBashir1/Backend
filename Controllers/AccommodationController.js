@@ -5,6 +5,8 @@ import DeletedAccommodation from "../models/DeletedAccommodation.js";
 import nodemailer from "nodemailer";
 import Host from "../models/Host.js";
 import { eachDayOfInterval, format } from 'date-fns';
+import ical from 'ical';
+import axios from "axios";
 
 // Create a new accommodation
 export const createAccommodation = async (req, res) => {
@@ -766,5 +768,100 @@ export const approveListing = async (req, res) => {
   } catch (err) {
     console.error("❌ Error approving listing:", err.message);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const syncBookings = async () => {
+  try {
+    const accommodations = await Accommodation.find({
+      url: { $ne: null }
+    });
+
+    console.log(`[${new Date().toISOString()}] Sync started. Processing ${accommodations.length} accommodations.`);
+
+    for (let index = 0; index < accommodations.length; index++) {
+      const accommodation = accommodations[index];
+      const { url, _id, name, occupancyCalendar } = accommodation;
+
+      console.log(`→ (${index + 1}/${accommodations.length}) Processing accommodation: ${name || _id}`);
+
+      try {
+        const response = await axios.get(url);
+        const parsedData = ical.parseICS(response.data);
+
+        const events = Object.values(parsedData).filter(event => event.type === "VEVENT");
+
+        let updated = false;
+        let addedCount = 0;
+
+        for (const event of events) {
+          const newStart = new Date(event.start).toISOString();
+          const newEnd = new Date(event.end).toISOString();
+          const guestName = (event.summary || "ICS Guest").trim();
+          const status = "booked";
+
+          const exists = occupancyCalendar.some(entry => {
+            const entryStart = new Date(entry.startDate).toISOString();
+            const entryEnd = new Date(entry.endDate).toISOString();
+            const entryGuest = (entry.guestName || "ICS Guest").trim();
+            const entryStatus = (entry.status || "booked").trim();
+
+            const match =
+              entryStart === newStart &&
+              entryEnd === newEnd &&
+              entryGuest === guestName &&
+              entryStatus === status;
+
+            // console.log('🔍 Comparing booking:', {
+            //   entryStart,
+            //   newStart,
+            //   entryEnd,
+            //   newEnd,
+            //   entryGuest,
+            //   guestName,
+            //   entryStatus,
+            //   status,
+            //   match
+            // });
+
+            return match;
+          });
+
+          if (!exists) {
+            console.log('➕ No match found. Adding booking:', {
+              startDate: newStart,
+              endDate: newEnd,
+              guestName,
+              status
+            });
+
+            occupancyCalendar.push({
+              startDate: new Date(newStart),
+              endDate: new Date(newEnd),
+              guestName,
+              status,
+            });
+
+            updated = true;
+            addedCount++;
+          } else {
+            console.log('✅ Duplicate booking found. Skipping.');
+          }
+        }
+
+        if (updated) {
+          await accommodation.save();
+          console.log(`✅ Updated: ${name || _id} — ${addedCount} new booking(s) added.\n`);
+        } else {
+          console.log(`✓ No updates: ${name || _id} — All bookings already exist.\n`);
+        }
+      } catch (error) {
+        console.error(`❌ Error syncing ${name || _id}:`, error.message);
+      }
+    }
+
+    console.log(`[${new Date().toISOString()}] Sync complete.`);
+  } catch (err) {
+    console.error("🚨 Sync error:", err.message);
   }
 };
