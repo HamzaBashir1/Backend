@@ -19,10 +19,8 @@ import reviewRoutes from './Routes/ReviewRoutes.js';
 import EmailRoutes from './Routes/EmailRoutes.js';
 import ReservationRoutes from './Routes/ReservationRoutes.js';
 import FavoriteRoutes from './Routes/FavoriteRoutes.js'
-import BlogRoutes from "./Routes/BlogRoutes.js"
 import bodyParser from 'body-parser';
 import CalendarRoutes from './Routes/CalendarRoutes.js'
-import Writemessage from "./Routes/WritemessageRoutes.js"
 import './utils/cleanupJob.js';
 import cron from "node-cron";
 import { syncBookings } from "./Controllers/AccommodationController.js";
@@ -101,9 +99,7 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/subscribe", EmailRoutes);
 app.use("/api/reservation", ReservationRoutes);
 app.use("/api/favorite", FavoriteRoutes);
-app.use("/api/blog", BlogRoutes);
 app.use("/api", CalendarRoutes); 
-app.use("/api/messages", Writemessage); 
 
 // Socket.IO connection
 io.on('connection', (socket) => {
