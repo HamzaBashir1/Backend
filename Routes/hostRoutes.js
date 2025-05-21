@@ -5,8 +5,7 @@ import {
     getAllHosts,
     getSingleHost,
     getHostProfile,
-    getHostById,
-    getLatestLoggedInHost,
+    getHostById
 } 
 from "../Controllers/HostController.js";
 import { authenticate, restrict } from "../auth/verifyToken.js";
@@ -14,7 +13,6 @@ import { authenticate, restrict } from "../auth/verifyToken.js";
 const router = express.Router();
 
 // Public route for fetching host by ID
-router.get('/latest', getLatestLoggedInHost);
 router.get("/:userId", getHostById);
 router.get('/:id', authenticate, restrict(['host']), getSingleHost);
 router.get('/', getAllHosts);

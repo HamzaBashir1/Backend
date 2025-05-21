@@ -93,9 +93,6 @@ const HostSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Accommodation',
 }],
-lastLoginAt: { type: Date },
-lastLoginIP: { type: String },
-lastUserAgent: { type: String },
 // Reset Password Fields
 resetPasswordToken: { type: String },
 resetPasswordExpires: { type: Date },

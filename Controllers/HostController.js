@@ -97,38 +97,3 @@ export const getHostById = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
-
-export const getLatestLoggedInHost = async (req, res) => {
-    try {
-      // Find all hosts with required fields and sort by last login date
-      const hosts = await Host.find({
-        lastLoginAt: { $exists: true, $ne: null },
-        lastLoginIP: { $exists: true, $ne: null },
-        lastUserAgent: { $exists: true, $ne: null },
-      })
-      .sort({ lastLoginAt: -1 })
-      .select('name email lastLoginAt lastLoginIP lastUserAgent');
-  
-      // If no hosts found
-      if (hosts.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: "No recently logged-in hosts found with all required fields"
-        });
-      }
-  
-      // Respond with all matching hosts and their count
-      res.status(200).json({
-        success: true,
-        count: hosts.length,
-        hosts,
-      });
-    } catch (error) {
-      console.error("Error fetching hosts:", error);
-      res.status(500).json({
-        success: false,
-        message: "Server error",
-      });
-    }
-};  
-  

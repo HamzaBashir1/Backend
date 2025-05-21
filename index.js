@@ -24,6 +24,7 @@ import CalendarRoutes from './Routes/CalendarRoutes.js'
 import './utils/cleanupJob.js';
 import cron from "node-cron";
 import { syncBookings } from "./Controllers/AccommodationController.js";
+import LoginHistory from "./Routes/LoginHistory.js"
 
 dotenv.config();
 
@@ -102,6 +103,7 @@ app.use("/api/subscribe", EmailRoutes);
 app.use("/api/reservation", ReservationRoutes);
 app.use("/api/favorite", FavoriteRoutes);
 app.use("/api", CalendarRoutes); 
+app.use("/api", LoginHistory);
 
 // Socket.IO connection
 io.on('connection', (socket) => {

@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import nodemailer from 'nodemailer';
 import Host from "../models/Host.js";
+import LoginHistory from "../models/LoginHistory.js";
 
 const generateToken = (user) => {
   return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET_KEY, {
@@ -193,19 +194,12 @@ export const login = async (req, res) => {
       return res.status(400).json({ status: false, message: t.invalidCredentials });
     }
 
-    // Update login fields
-    user.lastLoginAt = new Date();
-    user.lastLoginIP = req.ip || req.connection.remoteAddress || 'Unknown';
-    user.lastUserAgent = req.headers['user-agent'] || 'Unknown';
-
-    // console.log('Updated user login info:', {
-    //   lastLoginAt: user.lastLoginAt,
-    //   lastLoginIP: user.lastLoginIP,
-    //   lastUserAgent: user.lastUserAgent,
-    // });
-
-    await user.save();
-    console.log('User saved after login info update');
+    // Save login history separately
+    await LoginHistory.create({
+      hostId: host._id,
+      ip: req.ip,
+      userAgent: req.get("User-Agent"),
+    });
 
     // Generate authentication token
     const token = generateToken(user);
@@ -217,12 +211,7 @@ export const login = async (req, res) => {
       status: true,
       message: t.loginSuccess,
       token,
-      data: {
-        ...rest,
-        lastLoginAt: user.lastLoginAt,
-        lastLoginIP: user.lastLoginIP,
-        lastUserAgent: user.lastUserAgent,
-      },
+      data: { ...rest },
       role,
     });
   } catch (err) {
