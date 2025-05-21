@@ -87,6 +87,8 @@ app.get('/', (req, res) => {
   res.json({ message: "API is working" });
 });
 
+app.set('trust proxy', true);
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);

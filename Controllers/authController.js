@@ -165,31 +165,47 @@ export const login = async (req, res) => {
   try {
     let user = null;
 
-    const guest = await User.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
-    const host = await Host.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
+    const guest = await User.findOne({ email: { $regex: new RegExp(`^${email}$`, "i") } });
+    const host = await Host.findOne({ email: { $regex: new RegExp(`^${email}$`, "i") } });
 
-    if (guest) {
-      user = guest;
-    }
-    if (host) {
-      user = host;
-    }
+    console.log('Guest found:', guest);
+    console.log('Host found:', host);
 
-    //check if user exist or not
+    if (guest) user = guest;
+    if (host) user = host;
+
+    // Check if user exists
     if (!user) {
+      console.log('User not found');
       return res.status(404).json({ message: t.userNotFound });
     }
 
     // Ensure the user is verified
     if (!user.isVerified) {
+      console.log('User not verified');
       return res.status(400).json({ message: t.verifyEmail });
     }
 
     // Compare password
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
+      console.log('Password does not match');
       return res.status(400).json({ status: false, message: t.invalidCredentials });
     }
+
+    // Update login fields
+    user.lastLoginAt = new Date();
+    user.lastLoginIP = req.ip || req.connection.remoteAddress || 'Unknown';
+    user.lastUserAgent = req.headers['user-agent'] || 'Unknown';
+
+    // console.log('Updated user login info:', {
+    //   lastLoginAt: user.lastLoginAt,
+    //   lastLoginIP: user.lastLoginIP,
+    //   lastUserAgent: user.lastUserAgent,
+    // });
+
+    await user.save();
+    console.log('User saved after login info update');
 
     // Generate authentication token
     const token = generateToken(user);
@@ -197,8 +213,20 @@ export const login = async (req, res) => {
     // Remove password from response
     const { password: _, role, booking, ...rest } = user._doc;
 
-    res.status(200).json({ status: true, message: t.loginSuccess, token, data: { ...rest }, role });
+    res.status(200).json({
+      status: true,
+      message: t.loginSuccess,
+      token,
+      data: {
+        ...rest,
+        lastLoginAt: user.lastLoginAt,
+        lastLoginIP: user.lastLoginIP,
+        lastUserAgent: user.lastUserAgent,
+      },
+      role,
+    });
   } catch (err) {
+    console.error('Login error:', err);
     res.status(400).json({ status: false, message: t.loginFailed });
   }
 };
