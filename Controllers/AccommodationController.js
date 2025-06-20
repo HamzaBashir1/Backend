@@ -738,8 +738,8 @@ export const approveListing = async (req, res) => {
     // Set up nodemailer transporter
     const transporter = nodemailer.createTransport({
       host: "smtp.websupport.sk",
-      port: 587,
-      secure: false,
+      port: 465,
+      secure: true,
       auth: {
         user: "support@putko.sk",
         pass: "Putko@786",  // You should replace this with an environment variable for security
