@@ -59,23 +59,50 @@ const io = new Server(server, {
   },
 });
 
+process.on('uncaughtException', (err) => {
+  console.error('🔥 Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+
 // Session and passport configuration
-app.use(session({
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI,        // Your MongoDB connection URI
-    collectionName: 'sessions',               // Optional
-    ttl: 24 * 60 * 60,                        // Session TTL in seconds (1 day)
-  }),
-  secret: process.env.SESSION_SECRET || 'your-secret',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24,              // 1 day in milliseconds
-    httpOnly: true,                           // Prevent JS access to cookies
-    secure: process.env.NODE_ENV === 'production', // Use HTTPS only in prod
-    sameSite: 'lax',                          // Protect against CSRF
-  },
-}));
+try {
+  const sessionStore = MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    collectionName: 'sessions',
+    ttl: 24 * 60 * 60, // 1 day
+  });
+
+  sessionStore.on('error', function (error) {
+    console.error("❌ Session store error:", error);
+  });
+
+  app.use(session({
+    store: sessionStore,
+    secret: process.env.SESSION_SECRET || 'your-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    },
+  }));
+} catch (err) {
+  console.error("🧨 Error setting up session:", err);
+}
+
+if (process.env.NODE_ENV !== 'production') {
+  setInterval(() => {
+    const memoryUsed = process.memoryUsage().heapUsed / 1024 / 1024;
+    console.log(`🧠 Memory used: ${Math.round(memoryUsed * 100) / 100} MB`);
+  }, 30000);
+}
+
 
 app.use(passport.initialize());
 app.use(passport.session());
