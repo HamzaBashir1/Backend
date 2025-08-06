@@ -1,4 +1,5 @@
 import express from "express";
+import MongoStore from 'connect-mongo'; // ✅ MISSING IMPORT — ADD THIS
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -60,9 +61,20 @@ const io = new Server(server, {
 
 // Session and passport configuration
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,        // Your MongoDB connection URI
+    collectionName: 'sessions',               // Optional
+    ttl: 24 * 60 * 60,                        // Session TTL in seconds (1 day)
+  }),
+  secret: process.env.SESSION_SECRET || 'your-secret',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24,              // 1 day in milliseconds
+    httpOnly: true,                           // Prevent JS access to cookies
+    secure: process.env.NODE_ENV === 'production', // Use HTTPS only in prod
+    sameSite: 'lax',                          // Protect against CSRF
+  },
 }));
 
 app.use(passport.initialize());
