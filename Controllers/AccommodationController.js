@@ -55,7 +55,7 @@ export const getUserAccommodations = async (req, res) => {
   try {
     // Validate that the userId is a valid ObjectId
     // Find all accommodations where the userId matches
-    const accommodations = await Accommodation.find({ userId }).populate('userId', 'name email'); // Optionally populate user info
+    const accommodations = await Accommodation.find({ userId }).populate('userId', 'name email').lean(); // Optionally populate user info
 
     if (accommodations.length === 0) {
       return res.status(404).json({ message: "No accommodations found for this user" });
@@ -70,7 +70,7 @@ export const getUserAccommodations = async (req, res) => {
 // Get all accommodations
 export const getAccommodations = async (req, res) => {
   try {
-    const accommodations = await Accommodation.find().populate('userId', 'name email'); // Optionally populate user info
+    const accommodations = await Accommodation.find().lean(); // Optionally populate user info
     res.status(200).json(accommodations);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -518,8 +518,8 @@ export const searchAccommodationsByCategory = async (req, res) => {
 
     // Person capacity
     if (person) {
-  filters.person = { $lte: parseInt(person) };
-}
+      filters.person = { $lte: parseInt(person) };
+    }
     
     if (beds) filters.beds = { $lte: parseInt(beds) };
 
@@ -572,7 +572,7 @@ export const searchAccommodationsByCategory = async (req, res) => {
     }
 
     // Execute query
-    const accommodations = await Accommodation.find(filters).populate('userId', 'name email');
+    const accommodations = await Accommodation.find(filters).lean();
     if (accommodations.length === 0) {
       return res.status(200).json({ message: 'No accommodations found.' });
     }
@@ -693,7 +693,7 @@ export const getAccommodationBySlug = async (req, res) => {
     const sanitizedSlug = slug.replace(/\s+/g, '-').toLowerCase();
 
     // Correct query to match the 'slug' field, not '_id'
-    const accommodation = await Accommodation.findOne({ slug: sanitizedSlug }).populate('userId', 'name email');
+    const accommodation = await Accommodation.findOne({ slug: sanitizedSlug }).populate('userId', 'name email').lean();
 
     if (!accommodation) {
       return res.status(404).json({ message: 'Accommodation not found' });
