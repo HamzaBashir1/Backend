@@ -12,7 +12,6 @@ import authRoutes from './Routes/auth.js';
 import adminRoutes from './Routes/adminRoutes.js';
 import userRoutes from "./Routes/user.js";
 import HostRoutes from './Routes/hostRoutes.js';
-import InvoiceRoutes from './Routes/invoiceRoutes.js';
 import accommodationRoutes from './Routes/AccommodationRoutes.js';
 import messageRoutes from './Routes/message.js';
 import Message from './models/messageModel.js';
@@ -57,14 +56,6 @@ const io = new Server(server, {
     origin: "https://www.putko.sk",
     credentials: true,
   },
-});
-
-process.on('uncaughtException', (err) => {
-  console.error('🔥 Uncaught Exception:', err);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 
@@ -134,7 +125,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/hosts', HostRoutes);
-app.use('/api', InvoiceRoutes);
 app.use('/api', accommodationRoutes);
 app.use('/api', messageRoutes);
 app.use("/api/reviews", reviewRoutes);
