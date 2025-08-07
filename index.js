@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import compression from "compression";
 import passport from './Controllers/passport.js';
 import session from 'express-session';
 import { Server } from "socket.io";
@@ -33,6 +34,9 @@ const Port = process.env.Port || 8000;
 
 app.use(bodyParser.json({ limit: '10mb' })); // Adjust the limit as necessary
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+
+// ✅ Enable GZIP compression before routes
+app.use(compression());
 
 // CORS Options
 const corsOptions = {
