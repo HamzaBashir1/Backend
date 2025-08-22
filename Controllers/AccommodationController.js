@@ -518,7 +518,7 @@ export const searchAccommodationsByCategory = async (req, res) => {
 
     // Person capacity
     if (person) {
-      filters.person = { $lte: parseInt(person) };
+      filters.person = { $gte: parseInt(person) };
     }
     
     if (beds) filters.beds = { $lte: parseInt(beds) };
