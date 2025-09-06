@@ -26,6 +26,8 @@ import './utils/cleanupJob.js';
 import cron from "node-cron";
 import { syncBookings } from "./Controllers/AccommodationController.js";
 import LoginHistory from "./Routes/LoginHistory.js"
+import BlogRoutes from "./Routes/BlogRoutes.js"
+import BlogCommentRoutes from "./Routes/BlogCommentRoutes.js"
 
 dotenv.config();
 
@@ -137,6 +139,8 @@ app.use("/api/reservation", ReservationRoutes);
 app.use("/api/favorite", FavoriteRoutes);
 app.use("/api", CalendarRoutes); 
 app.use("/api", LoginHistory);
+app.use("/api/blog", BlogRoutes);
+app.use("/api/blog-comments", BlogCommentRoutes);
 
 // Socket.IO connection
 io.on('connection', (socket) => {
