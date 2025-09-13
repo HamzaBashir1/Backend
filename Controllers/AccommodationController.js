@@ -483,6 +483,7 @@ export const searchAccommodationsByCategory = async (req, res) => {
       startDate,
       endDate,
       partyOrganizing,
+      name,
     } = req.query;
 
     let filters = {};
@@ -515,6 +516,15 @@ export const searchAccommodationsByCategory = async (req, res) => {
     if (smoking) filters['smoking.en'] = smoking;
     if (rentalform) filters['rentalform.en'] = rentalform;
     if (partyOrganizing) filters['partyOrganizing.en'] = partyOrganizing;
+
+    // Accommodation Name (case-insensitive search) - support both `name` and legacy `accommodationName`
+    if (name) {
+      filters.$or = [
+        { name: { $regex: name, $options: "i" } },
+        { 'name.en': { $regex: name, $options: "i" } }, // Adjust based on actual schema
+        { accommodationName: { $regex: name, $options: "i" } },
+      ];
+    }
 
     // Person capacity
     if (person) {
