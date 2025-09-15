@@ -89,6 +89,10 @@ const reservationSchema = new mongoose.Schema({
     enum: ["pending", "approved", "cancelled"],
     default: "pending",
   },
+  reviewEmailSent: {
+    type: Boolean,
+    default: false,
+  },
   message: { type: String, default: "" },
   createdAt: {
     type: Date,

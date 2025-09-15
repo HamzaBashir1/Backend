@@ -7,25 +7,20 @@ const reviewSchema = new mongoose.Schema({
     ref: 'Accommodation',
     required: true,
   },
-  user: {
-    type: mongoose.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  userReview: {
-    type: mongoose.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  reviewText: {
-    type: String,
-    required: true,
-  },
+
   name: {
       type: String,
       required: true,
         // Optional: trims any extra spaces
     },
+  email: {
+    type: String,
+    required: true,
+  },
+  reviewText: {   // ✅ added field
+    type: String,
+    required: true,
+  },
   pluses: String,
   cons: String,
   overallRating: {
@@ -46,15 +41,6 @@ const reviewSchema = new mongoose.Schema({
     PriceQuality: { type: Number, min: 0, max: 5, default: 0 },
   },
 }, { timestamps: true });
-
-// Pre-hook to populate user data when fetching reviews
-reviewSchema.pre(/^find/, function(next) {
-  this.populate({
-    path: 'user',
-    select: 'name photo',
-  });
-  next();
-});
 
 // Static method to calculate average ratings for an accommodation
 reviewSchema.statics.calAverageRatings = async function(accommodationId) {

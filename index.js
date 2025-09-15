@@ -28,6 +28,7 @@ import { syncBookings } from "./Controllers/AccommodationController.js";
 import LoginHistory from "./Routes/LoginHistory.js"
 import BlogRoutes from "./Routes/BlogRoutes.js"
 import BlogCommentRoutes from "./Routes/BlogCommentRoutes.js"
+import { startReviewJob } from "./utils/reviewJob.js";
 
 dotenv.config();
 
@@ -118,6 +119,8 @@ cron.schedule("0 */3 * * *", () => {
   console.log(`[${new Date().toISOString()}] Running booking sync...`);
   syncBookings();
 });
+
+startReviewJob();
 
 // Test route to check if the API is working
 app.get('/', (req, res) => {
