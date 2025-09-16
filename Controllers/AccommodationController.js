@@ -760,7 +760,7 @@ export const approveListing = async (req, res) => {
       <p><strong>Hostiteľ ${host.name || "Neznámy"}</strong> schválil svoju ponuku na platforme Putko.</p>
       <ul>
         <li><strong>Email:</strong> ${host.email || "Email nie je dostupný"}</li>
-        <li><strong>Ponuka:</strong> <a href="${process.env.CLIENT_SITE_URL}/listing-stay-detail/${accommodation.slug}">Zobraziť ponuku</a></li>
+        <li><strong>Ponuka:</strong> <a href="${process.env.CLIENT_SITE_URL}/listings/${accommodation.slug}">Zobraziť ponuku</a></li>
       </ul>
     `,
     };
@@ -769,7 +769,7 @@ export const approveListing = async (req, res) => {
     await transporter.sendMail(mailOptions);
 
     // Redirect to frontend listing detail page after approval
-    return res.redirect(`${process.env.CLIENT_SITE_URL}/listing-stay-detail/${slug}`);
+    return res.redirect(`${process.env.CLIENT_SITE_URL}/listings/${slug}`);
 
   } catch (err) {
     console.error("❌ Error approving listing:", err.message);
