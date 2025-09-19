@@ -15,6 +15,7 @@ const blogSchema = new mongoose.Schema({
     required: true,
     index: true
   },
+  views: { type: Number, default: 0, index: true },
   createdAt: { type: Date, default: Date.now, index: true }
 });
 

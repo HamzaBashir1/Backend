@@ -1,5 +1,5 @@
 import express from 'express';
-import { createBlog, getBlogs, getBlogById, deleteBlog, editBlog, getBlogBySlug } from '../Controllers/BlogController.js';
+import { createBlog, getBlogs, getBlogById, deleteBlog, editBlog, getBlogBySlug, incrementView } from '../Controllers/BlogController.js';
 
 const router = express.Router();
 
@@ -9,11 +9,14 @@ router.post('/', createBlog);
 // Route for fetching all blog posts
 router.get('/', getBlogs);
 
-// ✅ Get a blog by Slug (SEO friendly)
-router.get('/:slug', getBlogBySlug);
+// Get a blog by Slug (SEO friendly)
+router.get('slug/:slug', getBlogBySlug);
 
 // Route for fetching a single blog post by ID
 router.get('/:id', getBlogById);
+
+// Increment view count
+router.post("/:id/view", incrementView);
 
 // Route for deleting a blog post by ID
 router.delete('/:id', deleteBlog);
