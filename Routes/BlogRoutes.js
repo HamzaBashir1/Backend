@@ -10,7 +10,7 @@ router.post('/', createBlog);
 router.get('/', getBlogs);
 
 // Get a blog by Slug (SEO friendly)
-router.get('slug/:slug', getBlogBySlug);
+router.get('/slug/:slug', getBlogBySlug);
 
 // Route for fetching a single blog post by ID
 router.get('/:id', getBlogById);
