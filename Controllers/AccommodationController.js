@@ -659,6 +659,8 @@ export const generateICS = async (req, res) => {
       const startDate = new Date(entry.startDate); // Convert to Date object
       const endDate = new Date(entry.endDate); // Convert to Date object
 
+      endDate.setDate(endDate.getDate() + 1);
+      
       // Validate the dates
       if (isNaN(startDate) || isNaN(endDate)) {
         throw new Error("Invalid date format in occupancyCalendar");
