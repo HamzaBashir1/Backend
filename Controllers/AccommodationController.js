@@ -4,7 +4,7 @@ import { createEvents } from 'ics';
 import DeletedAccommodation from "../models/DeletedAccommodation.js";
 import nodemailer from "nodemailer";
 import Host from "../models/Host.js";
-import { eachDayOfInterval, format, subDays } from 'date-fns';
+import { eachDayOfInterval, format } from 'date-fns';
 import ical from 'ical';
 import axios from "axios";
 
@@ -99,7 +99,7 @@ export const updateAccommodationByAccommodationId = async (req, res) => {
     // Find the accommodation associated with the accommodationId
     const accommodation = await Accommodation.findByIdAndUpdate(
       accommodationId, // Match the document by accommodationId
-      { $set: { occupancyCalendar } }, // Add new occupancyCalendar entries
+      { $push: { occupancyCalendar: { $each: occupancyCalendar } } }, // Add new occupancyCalendar entries
       { new: true } // Return the updated document
     );
 
@@ -357,7 +357,7 @@ export const addToOccupancyCalendar = async (req, res) => {
     }
 
     const newStart = new Date(startDate);
-    const newEnd = subDays(new Date(endDate), 1);
+    const newEnd = new Date(endDate);
 
     const requestedDates = eachDayOfInterval({ start: newStart, end: newEnd }).map(date =>
       format(date, 'yyyy-MM-dd')
@@ -659,7 +659,6 @@ export const generateICS = async (req, res) => {
       const startDate = new Date(entry.startDate); // Convert to Date object
       const endDate = new Date(entry.endDate); // Convert to Date object
 
-      endDate.setDate(endDate.getDate() + 1);
       
       // Validate the dates
       if (isNaN(startDate) || isNaN(endDate)) {
