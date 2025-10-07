@@ -4,7 +4,7 @@ import { createEvents } from 'ics';
 import DeletedAccommodation from "../models/DeletedAccommodation.js";
 import nodemailer from "nodemailer";
 import Host from "../models/Host.js";
-import { eachDayOfInterval, format } from 'date-fns';
+import { eachDayOfInterval, format, subDays } from 'date-fns';
 import ical from 'ical';
 import axios from "axios";
 
@@ -357,7 +357,7 @@ export const addToOccupancyCalendar = async (req, res) => {
     }
 
     const newStart = new Date(startDate);
-    const newEnd = new Date(endDate);
+    const newEnd = subDays(new Date(endDate), 1);
 
     const requestedDates = eachDayOfInterval({ start: newStart, end: newEnd }).map(date =>
       format(date, 'yyyy-MM-dd')
