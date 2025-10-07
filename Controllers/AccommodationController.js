@@ -99,7 +99,7 @@ export const updateAccommodationByAccommodationId = async (req, res) => {
     // Find the accommodation associated with the accommodationId
     const accommodation = await Accommodation.findByIdAndUpdate(
       accommodationId, // Match the document by accommodationId
-      { $push: { occupancyCalendar } }, // Add new occupancyCalendar entries
+      { $set: { occupancyCalendar } }, // Add new occupancyCalendar entries
       { new: true } // Return the updated document
     );
 
