@@ -99,7 +99,7 @@ export const updateAccommodationByAccommodationId = async (req, res) => {
     // Find the accommodation associated with the accommodationId
     const accommodation = await Accommodation.findByIdAndUpdate(
       accommodationId, // Match the document by accommodationId
-      { $push: { occupancyCalendar: { $each: occupancyCalendar } } }, // Add new occupancyCalendar entries
+       { $push: { occupancyCalendar } }, // Add new occupancyCalendar entries
       { new: true } // Return the updated document
     );
 
@@ -803,14 +803,28 @@ export const syncBookings = async () => {
         let addedCount = 0;
 
         for (const event of events) {
-          const newStart = new Date(event.start).toISOString();
-          const newEnd = new Date(event.end).toISOString();
+          const normalizeDate = (date) => {
+            const d = new Date(date);
+            // Strip time & timezone (keep only date)
+            d.setHours(12, 0, 0, 0);
+            return d.toISOString().split("T")[0]; // "YYYY-MM-DD"
+          };
+
+          // Airbnb DTEND is exclusive → subtract 1 day
+          const rawStart = new Date(event.start);
+          const rawEnd = new Date(event.end);
+          rawEnd.setDate(rawEnd.getDate() - 1);
+
+          const newStart = normalizeDate(rawStart);
+          const newEnd = normalizeDate(rawEnd);
+
           const guestName = (event.summary || "ICS Guest").trim();
           const status = "booked";
 
           const exists = occupancyCalendar.some(entry => {
-            const entryStart = new Date(entry.startDate).toISOString();
-            const entryEnd = new Date(entry.endDate).toISOString();
+            const entryStart = normalizeDate(entry.startDate);
+            const entryEnd = normalizeDate(entry.endDate);
+
             const entryGuest = (entry.guestName || "ICS Guest").trim();
             const entryStatus = (entry.status || "booked").trim();
 
@@ -844,8 +858,8 @@ export const syncBookings = async () => {
             });
 
             occupancyCalendar.push({
-              startDate: new Date(newStart),
-              endDate: new Date(newEnd),
+              startDate: new Date(`${newStart}T00:00:00Z`),
+              endDate: new Date(`${newEnd}T00:00:00Z`),
               guestName,
               status,
             });
