@@ -38,4 +38,51 @@ export const fetchICal = async (req, res) => {
     }
 };
 
-export default fetchICal;
+export default fetchICal; 
+
+// Generic ICS fetcher that accepts a full URL from any provider (Airbnb, Booking.com, VRBO, Google Calendar, etc.)
+export const fetchICalByUrl = async (req, res) => {
+    try {
+        const { url } = req.query;
+        if (!url || typeof url !== 'string') { 
+            return res.status(400).json({ error: "Query param 'url' is required" });
+        }
+
+        // Basic validation: only allow http/https
+        let parsed;
+        try {
+            parsed = new URL(url);
+        } catch {
+            return res.status(400).json({ error: "Invalid URL" });
+        }
+        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+            return res.status(400).json({ error: "Only http/https URLs are allowed" });
+        }
+
+        // Fetch ICS
+        const response = await axios.get(parsed.toString(), { responseType: 'text' });
+        const iCalData = response.data;
+
+        // Parse ICS into unified booking objects
+        const events = ical.parseICS(iCalData);
+        const bookings = [];
+        for (const eventId in events) {
+            const event = events[eventId];
+            if (event && event.type === 'VEVENT') {
+                bookings.push({
+                    start: event.start,
+                    end: event.end,
+                    summary: event.summary,
+                    description: event.description,
+                    uid: event.uid,
+                    location: event.location,
+                });
+            }
+        }
+
+        return res.json({ bookings });
+    } catch (error) {
+        console.error("Error fetching generic iCal:", error.message);
+        return res.status(500).json({ error: "Failed to fetch calendar data." });
+    }
+};
