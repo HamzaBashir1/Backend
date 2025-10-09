@@ -671,7 +671,7 @@ export const generateICS = async (req, res) => {
         end: [endDate.getFullYear(), endDate.getMonth() + 1, endDate.getDate()], // Format as [YYYY, MM, DD]
         title: `Booking: ${entry.guestName || "Guest"}`,
         description: `Status: ${entry.status || "Unknown"}`,
-        location: accommodation.location?.address || "Accommodation Location",
+        location: accommodation.locationDetails?.streetAndNumber || "Accommodation Location",
       };
     });
 
@@ -682,12 +682,12 @@ export const generateICS = async (req, res) => {
         return res.status(500).json({ error: "Error generating calendar" });
       }
 
-      // Set headers for file download
-      res.setHeader(
-        "Content-Disposition",
-        `attachment; filename="${accommodation.name || "calendar"}.ics"`
-      );
+      if (!value || !value.startsWith("BEGIN:VCALENDAR")) {
+        return res.status(500).json({ error: "Invalid calendar format" });
+      }
+
       res.setHeader("Content-Type", "text/calendar;charset=utf-8");
+      res.setHeader("Content-Disposition", "inline; filename=calendar.ics");
       res.send(value);
     });
   } catch (error) {
