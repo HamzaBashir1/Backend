@@ -647,43 +647,39 @@ export const generateICS = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Fetch accommodation by ID
     const accommodation = await Accommodation.findById(id);
 
+    // Always respond in ICS format, even if empty
     if (!accommodation) {
-      return res.status(404).json({ error: "Accommodation not found" });
+      res.setHeader("Content-Type", "text/calendar;charset=utf-8");
+      return res.send(`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//YourCompany//Calendar Export//EN
+END:VCALENDAR`);
     }
 
-    // Map occupancyCalendar to ICS events
-    const events = accommodation.occupancyCalendar.map((entry) => {
-      const startDate = new Date(entry.startDate); // Convert to Date object
-      const endDate = new Date(entry.endDate); // Convert to Date object
-
+    const events = (accommodation.occupancyCalendar || []).map((entry) => {
+      const startDate = new Date(entry.startDate);
+      const endDate = new Date(entry.endDate);
       endDate.setDate(endDate.getDate() + 1);
-      
-      // Validate the dates
-      if (isNaN(startDate) || isNaN(endDate)) {
-        throw new Error("Invalid date format in occupancyCalendar");
-      }
 
       return {
-        start: [startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate()], // Format as [YYYY, MM, DD]
-        end: [endDate.getFullYear(), endDate.getMonth() + 1, endDate.getDate()], // Format as [YYYY, MM, DD]
-        title: `Booking: ${entry.guestName || "Guest"}`,
+        start: [startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate()],
+        end: [endDate.getFullYear(), endDate.getMonth() + 1, endDate.getDate()],
+        title: `Reserved - ${entry.guestName || "Guest"}`,
         description: `Status: ${entry.status || "Unknown"}`,
-        location: accommodation.locationDetails?.streetAndNumber || "Accommodation Location",
       };
     });
 
-    // Generate ICS content
     createEvents(events, (error, value) => {
       if (error) {
-        console.error("Error creating .ics file:", error);
-        return res.status(500).json({ error: "Error generating calendar" });
-      }
-
-      if (!value || !value.startsWith("BEGIN:VCALENDAR")) {
-        return res.status(500).json({ error: "Invalid calendar format" });
+        console.error("ICS generation error:", error);
+        // Still return valid ICS shell to satisfy Booking.com
+        res.setHeader("Content-Type", "text/calendar;charset=utf-8");
+        return res.send(`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//YourCompany//Calendar Export//EN
+END:VCALENDAR`);
       }
 
       res.setHeader("Content-Type", "text/calendar;charset=utf-8");
@@ -691,8 +687,13 @@ export const generateICS = async (req, res) => {
       res.send(value);
     });
   } catch (error) {
-    console.error("Error fetching accommodation:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error generating ICS:", error);
+    // Even on error, always return valid ICS header so Booking.com doesn’t get stuck
+    res.setHeader("Content-Type", "text/calendar;charset=utf-8");
+    res.send(`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//YourCompany//Calendar Export//EN
+END:VCALENDAR`);
   }
 };
 
