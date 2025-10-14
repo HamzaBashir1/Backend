@@ -34,29 +34,34 @@ export const fetchICal = async (req, res) => {
         res.json({ bookings });
     } catch (error) {
         console.error("Error fetching iCal data:", error.message);
-        res.status(500).json({ error: "Failed to fetch calendar data." });
+        // More specific error handling based on status codes might be added here
+        if (axios.isAxiosError(error) && error.response) {
+            // Forward specific HTTP errors from the iCal source
+            return res.status(error.response.status).json({ error: `Failed to fetch calendar data from source: ${error.response.statusText}` });
+        }
+        res.status(500).json({ error: "Failed to fetch calendar data due to an internal server error." });
     }
 };
 
-export default fetchICal; 
+export default fetchICal;
 
 // Generic ICS fetcher that accepts a full URL from any provider (Airbnb, Booking.com, VRBO, Google Calendar, etc.)
 export const fetchICalByUrl = async (req, res) => {
     try {
         const { url } = req.query;
-        if (!url || typeof url !== 'string') { 
-            return res.status(400).json({ error: "Query param 'url' is required" });
+        if (!url || typeof url !== 'string') {
+            return res.status(400).json({ error: "Query param 'url' is required and must be a string." });
         }
 
         // Basic validation: only allow http/https
         let parsed;
         try {
             parsed = new URL(url);
-        } catch {
-            return res.status(400).json({ error: "Invalid URL" });
+        } catch (e) {
+            return res.status(400).json({ error: "Invalid URL format provided." });
         }
         if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-            return res.status(400).json({ error: "Only http/https URLs are allowed" });
+            return res.status(400).json({ error: "Only http/https URLs are allowed for fetching iCal data." });
         }
 
         // Fetch ICS
@@ -68,6 +73,7 @@ export const fetchICalByUrl = async (req, res) => {
         const bookings = [];
         for (const eventId in events) {
             const event = events[eventId];
+            // Ensure event and event.type exist to prevent errors on malformed ICS entries
             if (event && event.type === 'VEVENT') {
                 bookings.push({
                     start: event.start,
@@ -83,6 +89,9 @@ export const fetchICalByUrl = async (req, res) => {
         return res.json({ bookings });
     } catch (error) {
         console.error("Error fetching generic iCal:", error.message);
-        return res.status(500).json({ error: "Failed to fetch calendar data." });
+        if (axios.isAxiosError(error) && error.response) {
+            return res.status(error.response.status).json({ error: `Failed to fetch calendar data from the provided URL: ${error.response.statusText}` });
+        }
+        return res.status(500).json({ error: "Failed to fetch calendar data due to an internal server error." });
     }
 };
