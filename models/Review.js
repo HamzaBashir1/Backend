@@ -11,15 +11,17 @@ const reviewSchema = new mongoose.Schema({
   name: {
       type: String,
       required: true,
-        // Optional: trims any extra spaces
+      index: true
     },
   email: {
     type: String,
     required: true,
+    index: true
   },
   reviewText: {   // ✅ added field
     type: String,
     required: true,
+    index: true
   },
   pluses: String,
   cons: String,
@@ -50,18 +52,16 @@ reviewSchema.statics.calAverageRatings = async function(accommodationId) {
         _id: '$accommodation',
         numOfRatings: { $sum: 1 },
         avgRating: { $avg: '$overallRating' },
-      }
-    }
+      },
+    },
   ]);
 
   if (stats.length > 0) {
     await Accommodation.findByIdAndUpdate(accommodationId, {
-      totalRating: stats[0].numOfRatings,
       averageRating: stats[0].avgRating,
     });
   } else {
     await Accommodation.findByIdAndUpdate(accommodationId, {
-      totalRating: 0,
       averageRating: 0,
     });
   }
@@ -70,6 +70,11 @@ reviewSchema.statics.calAverageRatings = async function(accommodationId) {
 // Post-hook to recalculate average ratings after saving a review
 reviewSchema.post('save', function() {
   this.constructor.calAverageRatings(this.accommodation);
+});
+
+// ✅ Also handle when a review is deleted
+reviewSchema.post('findOneAndDelete', async function (doc) {
+  if (doc) await doc.constructor.calAverageRatings(doc.accommodation);
 });
 
 export default mongoose.model('Review', reviewSchema);
